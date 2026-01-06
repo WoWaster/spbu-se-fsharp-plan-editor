@@ -1,4 +1,4 @@
-module PlanEditor.Builders
+module PlanEditor.DSL
 
 open PlanEditor.Types
 

@@ -1,7 +1,5 @@
-module PlanEditor.Examples
-
-open PlanEditor.Types
-open PlanEditor.Builders
+﻿open PlanEditor.Types
+open PlanEditor.DSL
 
 let примерДисциплины =
     дисциплина {
