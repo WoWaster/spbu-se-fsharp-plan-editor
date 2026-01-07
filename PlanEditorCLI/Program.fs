@@ -25,8 +25,8 @@ let bzhd =
     { Info =
         { FgosBlockCode = Disciplines
           Workload = 3
-          Competencies = Set.ofList [ "УК-8" ]
-          AssessmentForms = Set.ofList [ Credit ] }
+          Competencies = [ "УК-8" ]
+          AssessmentForms = [ Credit ] }
       Discipline =
         { Number = 073519
           Name = "Безопасность жизнедеятельности"
@@ -59,8 +59,7 @@ let practicalTrainingStandard =
               "ПКП-13-А-ПК-4"
               "УК-1"
               "УК-3" ]
-            |> Set.ofList
-          AssessmentForms = [ Credit ] |> Set.ofList }
+          AssessmentForms = [ Credit ] }
       Discipline =
         { Number = 064793
           Name = "Учебная практика 2 (научно-исследовательская работа)"
@@ -81,8 +80,8 @@ let teorverTop =
     { Info =
         { FgosBlockCode = Disciplines
           Workload = 2
-          Competencies = [ "ОПК-1"; "ПКА-1" ] |> Set.ofList
-          AssessmentForms = [ Credit ] |> Set.ofList }
+          Competencies = [ "ОПК-1"; "ПКА-1" ]
+          AssessmentForms = [ Credit ] }
       Discipline =
         { Number = 002188
           Name = "Теория вероятностей и математическая статистика"
@@ -118,7 +117,7 @@ let up =
       EnglishName = "Technology Programming"
       StudyLevel = Bachelor
       Specialty = "02.03.03 Математическое обеспечение и администрирование информационных систем"
-      LanguagesOfInstruction = Set.ofList [ Russian; English ]
+      LanguagesOfInstruction = [ Russian; English ]
       YearOfAdmission = 25
       Code = 5162
       Competencies = Map.ofList competencies

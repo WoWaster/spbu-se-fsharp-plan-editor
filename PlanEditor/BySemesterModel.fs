@@ -15,8 +15,8 @@ type AssessmentForm =
 type CommonInfo =
     { FgosBlockCode: FgosBlockCode
       Workload: int
-      Competencies: string Set
-      AssessmentForms: AssessmentForm Set }
+      Competencies: string list
+      AssessmentForms: AssessmentForm list }
 
 type ClassroomWork =
     { Lectures: int
@@ -130,7 +130,7 @@ type Plan =
       EnglishName: string
       StudyLevel: StudyLevel
       Specialty: string
-      LanguagesOfInstruction: LanguageOfInstruction Set
+      LanguagesOfInstruction: LanguageOfInstruction list
       YearOfAdmission: int
       Code: int
       Competencies: Map<string, string>
