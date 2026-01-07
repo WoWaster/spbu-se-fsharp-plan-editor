@@ -1,75 +1,99 @@
 module PlanEditor.Types
 
-type КодБлокаПоФГОС =
-    | Дисциплины
-    | Практики
-    | ГИА
+// Тип дисциплины
+type CourseType =
+    | Base
+    | Elective
+    | Facultative
 
-type ФормыАттестации =
+// Компетенции
+type Competence = string
+
+// Запись о месте в блоке выбора для элективов
+type ElectivesBlockEntry = {
+  Semester: int
+  Number: int
+  Specialization: string
+}
+
+// Распределение часов (15 значений из строки WorkHours)
+type WorkHoursDistribution ={
+      Lecture: int
+      Seminar: int
+      Consultation: int
+      Practical: int
+      Lab: int
+      Colloquium: int
+      CurrentControl: int
+      InterimAssessment: int
+      GuidedIndependent: int
+      WithTeacherPresence: int
+      WithTeacher: int
+      WithMethodologicalMaterials: int
+      CurrentControlIndependent: int
+      MidtermAssessment: int
+      TotalIndependentWork: int
+    }
+
+type MonitoringType =
     | Экзамен
     | Зачет
     | АттестационноеИспытание
+    | ТекущийКонтроль
 
-type АудиторнаяРабота =
-    { Лекции: int
-    // Семинары: int
-    // Консультации: int
-    // ПрактическиеЗанятия: int
-    // ЛабораторныеРаботы: int
-    // Коллоквиумы: int
-    // ТекущийКонтрольАудиторный: int
-    // ПромежуточнаяАттестацияАудиторная: int
+
+type Implementation = { 
+      Semester: int
+      LaborIntensity: int
+      Realization: string
+      Trajectory: string
+      MonitoringTypes: MonitoringType list
+      WorkHours: WorkHoursDistribution
+      Competences: Competence list
     }
 
-type СамостоятельнаяРабота =
-    { ПодРуководствомПреподавателя: int
-      ВПрисутствииПреподавателя: int
-      СИспользованиемМатериалов: int
-      ТекущийКонтрольСамостоятельный: int
-      ПромежуточнаяАттестацияСамостоятельная: int }
-
-type Дисциплина =
-    {
-      //КодБлокаПоФГОС: КодБлокаПоФГОС
-      // Трудоемкость: int
-      // TODO: Сделать компетенции отдельным типом
-      // Компетенции: string list
-      // Номер: int
-      Название: string
-      // АнглийскоеНазвание: string
-      // ФормыАттестации: ФормыАттестации Set
-      АудиторнаяРабота: АудиторнаяРабота
-    // СамостоятельнаяРабота: СамостоятельнаяРабота
-    // ИнтерактивныеЧасы: int
+type Course = {
+      Code: string
+      RussianName: string
+      EnglishName: string
+      Type: CourseType
+      ElectivesBlock: ElectivesBlockEntry list
+      Implementations: Implementation list
     }
 
-let базоваяАудиторнаяРабота = { Лекции = 0 }
-//       Семинары = 0
-//       Консультации = 0
-//       ПрактическиеЗанятия = 0
-//       ЛабораторныеРаботы = 0
-//       Коллоквиумы = 0
-//       ТекущийКонтрольАудиторный = 0
-//       ПромежуточнаяАттестацияАудиторная = 0 }
+let emptyWorkHours = {
+    Lecture = 0
+    Seminar = 0
+    Consultation = 0
+    Practical = 0
+    Lab = 0
+    Colloquium = 0
+    CurrentControl = 0
+    InterimAssessment = 0
+    GuidedIndependent = 0
+    WithTeacherPresence = 0
+    WithTeacher = 0
+    WithMethodologicalMaterials = 0
+    CurrentControlIndependent = 0
+    MidtermAssessment = 0
+    TotalIndependentWork = 0
+}
 
-let базоваяСамостоятельнаяРабота =
-    { ПодРуководствомПреподавателя = 0
-      ВПрисутствииПреподавателя = 0
-      СИспользованиемМатериалов = 0
-      ТекущийКонтрольСамостоятельный = 0
-      ПромежуточнаяАттестацияСамостоятельная = 0 }
+let emptyImplementation = {
+    Semester = 0
+    LaborIntensity = 0
+    Realization = ""
+    Trajectory = ""
+    MonitoringTypes = []
+    WorkHours = emptyWorkHours
+    Competences = []
+}
 
-let базоваяДисциплина =
-    {
-
-      //КодБлокаПоФГОС = Дисциплины
-      //       Трудоемкость = 0
-      //       Номер = 0
-      Название = "Базовая дисциплина"
-      //       АнглийскоеНазвание = "Basic discipline"
-      //       Компетенции = []
-      //       ФормыАттестации = Set.empty
-      АудиторнаяРабота = базоваяАудиторнаяРабота
-    //       СамостоятельнаяРабота = базоваяСамостоятельнаяРабота
-    //       ИнтерактивныеЧасы = 0
-    }
+let emptyCourse = {
+    Code = ""
+    RussianName = ""
+    EnglishName = ""
+    Type = Base
+    ElectivesBlock = []
+    Implementations = []
+}
