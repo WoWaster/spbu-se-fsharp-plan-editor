@@ -7,6 +7,7 @@ let main argv =
         implementation {
             semester 1
             laborIntensity 3
+            blockCode PracticalTraining
             realization ""
             trajectory ""
             monitoring [Зачет]
@@ -21,6 +22,7 @@ let main argv =
         implementation {
             semester 2
             laborIntensity 3
+            blockCode Disciplines
             realization ""
             trajectory ""
             monitoring [Экзамен]

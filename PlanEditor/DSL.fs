@@ -89,6 +89,9 @@ type ImplementationBuilder() =
     [<CustomOperation("laborIntensity")>]
     member _.LaborIntensity(state, ze: int) = { state with LaborIntensity = ze }
 
+    [<CustomOperation("blockCode")>]
+    member _.BlockCode(state, bc: FgosBlockCode) = { state with BlockCode = bc }
+
     [<CustomOperation("realization")>]
     member _.Realization(state, r: string) = { state with Realization = r }
 

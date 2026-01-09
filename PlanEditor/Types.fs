@@ -42,9 +42,15 @@ type MonitoringType =
     | ТекущийКонтроль
 
 
+type FgosBlockCode =
+    | Disciplines
+    | PracticalTraining
+    | Gia
+
 type Implementation = { 
       Semester: int
       LaborIntensity: int
+      BlockCode: FgosBlockCode
       Realization: string
       Trajectory: string
       MonitoringTypes: MonitoringType list
@@ -82,6 +88,7 @@ let emptyWorkHours = {
 let emptyImplementation = {
     Semester = 0
     LaborIntensity = 0
+    BlockCode = Disciplines
     Realization = ""
     Trajectory = ""
     MonitoringTypes = []
