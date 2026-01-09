@@ -75,8 +75,8 @@ type WorkHoursBuilder() =
     [<CustomOperation("midtermAssessment")>]
     member _.MidtermAssessment(state, v: int) = { state with MidtermAssessment = v }
 
-    [<CustomOperation("totalInteractive")>]
-    member _.TotalInteractive(state, v: int) = { state with TotalIndependentWork = v }
+    [<CustomOperation("totalIndependentWork")>]
+    member _.TotalIndependentWork(state, v: int) = { state with TotalIndependentWork = v }
 
 let workHours = WorkHoursBuilder()
 
