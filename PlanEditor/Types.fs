@@ -48,15 +48,16 @@ type FgosBlockCode =
     | Gia
 
 type Implementation = { 
-      Semester: int
-      LaborIntensity: int
-      BlockCode: FgosBlockCode
-      Realization: string
-      Trajectory: string
-      MonitoringTypes: MonitoringType list
-      WorkHours: WorkHoursDistribution
-      Competences: Competence list
-    }
+    Semester: int
+    LaborIntensity: int
+    [<System.Text.Json.Serialization.JsonIgnore>]
+    BlockCode: FgosBlockCode
+    Realization: string
+    Trajectory: string
+    MonitoringTypes: MonitoringType list
+    WorkHours: WorkHoursDistribution
+    Competences: Competence list
+}
 
 type Course = {
       Code: string

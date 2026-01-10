@@ -1,51 +1,96 @@
 module PlanEditor.ConsoleEditor
 
 open PlanEditor.Types
+open PlanEditor.DSL
 open System
 open System.Text.Json
 open System.Text.Json.Serialization
 
-// Кастомный конвертер для MonitoringType
-let monitoringTypeConverter = 
-    { new JsonConverter<MonitoringType>() with
-        override _.Read(reader, typeToConvert, options) =
-            let str = reader.GetString()
-            match str with
-            | "Экзамен" -> Экзамен
-            | "Зачет" -> Зачет
-            | "АттестационноеИспытание" -> АттестационноеИспытание
-            | "ТекущийКонтроль" -> ТекущийКонтроль
-            | _ -> failwithf "Неизвестный MonitoringType: %s" str
-        
-        override _.Write(writer, value, options) =
-            let str = 
-                match value with
-                | Экзамен -> "Экзамен"
-                | Зачет -> "Зачет"
-                | АттестационноеИспытание -> "АттестационноеИспытание"
-                | ТекущийКонтроль -> "ТекущийКонтроль"
-            writer.WriteStringValue(str) }
+type CourseTypeConverter() =
+    inherit JsonConverter<CourseType>()
 
-// JSON сериализатор для F# типов с поддержкой кириллицы
-let jsonOptions = 
-    let options = JsonSerializerOptions()
-    options.WriteIndented <- true
-    options.PropertyNamingPolicy <- JsonNamingPolicy.CamelCase
-    
-    // Разрешаем все символы Unicode без экранирования
-    options.Encoder <- System.Text.Encodings.Web.JavaScriptEncoder.Create(
-        System.Text.Unicode.UnicodeRanges.All)
-    
-    // Добавляем конвертеры
-    options.Converters.Add(JsonFSharpConverter(
-        JsonUnionEncoding.InternalTag ||| 
-        JsonUnionEncoding.NamedFields |||
-        JsonUnionEncoding.UnwrapSingleCaseUnions,
-        unionTagName = "Case"
-    ))
-    options.Converters.Add(monitoringTypeConverter)
-    
-    options
+    override _.Read(reader, _, _) =
+        match reader.GetString() with
+        | null | "" -> Base
+        | s ->
+            match s with
+            | _ when s.Equals("Base", StringComparison.OrdinalIgnoreCase)       -> Base
+            | _ when s.Equals("Elective", StringComparison.OrdinalIgnoreCase)   -> Elective
+            | _ when s.Equals("Facultative", StringComparison.OrdinalIgnoreCase)-> Facultative
+            | _ -> failwithf "Неизвестный тип курса: %s" s
+
+    override _.Write(writer, value, _) =
+        let str = 
+            match value with
+            | Base        -> "Base"
+            | Elective    -> "Elective"
+            | Facultative -> "Facultative"
+        writer.WriteStringValue(str)
+
+// 2. WorkHours → строка с 15 числами
+type WorkHoursStringConverter() =
+    inherit JsonConverter<WorkHoursDistribution>()
+
+    override _.Read(reader, _, _) =
+        parseWorkHours (reader.GetString())
+
+    override _.Write(writer, value, _) =
+        writer.WriteStringValue(
+            $"{value.Lecture} {value.Seminar} {value.Consultation} {value.Practical} " +
+            $"{value.Lab} {value.Colloquium} {value.CurrentControl} {value.InterimAssessment} " +
+            $"{value.GuidedIndependent} {value.WithTeacherPresence} {value.WithTeacher} " +
+            $"{value.WithMethodologicalMaterials} {value.CurrentControlIndependent} " +
+            $"{value.MidtermAssessment} {value.TotalIndependentWork}")
+
+// 3. MonitoringTypes — строка с запятыми (например "зачёт, экзамен")
+let mtToString = function
+    | Экзамен                  -> "экзамен"
+    | Зачет                    -> "зачёт"
+    | АттестационноеИспытание  -> "аттестационное испытание"
+    | ТекущийКонтроль          -> "текущий контроль"
+
+let strToMt (s:string) =
+    match s.Trim().ToLowerInvariant() with
+    | "экзамен"                          -> Экзамен
+    | "зачёт" | "зачет"                  -> Зачет
+    | "аттестационное испытание"
+    | "аттестационноеиспытание"
+    | "аттестация"                       -> АттестационноеИспытание
+    | "текущий контроль" | "текущийконтроль" | "контроль" -> ТекущийКонтроль
+    | _                                  -> failwith $"Неизвестная форма контроля: {s}"
+
+type MonitoringTypesStringConverter() =
+    inherit JsonConverter<MonitoringType list>()
+
+    override _.Read(reader, _, _) =
+        let str = reader.GetString()
+        if String.IsNullOrWhiteSpace str then []
+        else
+            str.Split([|','; ';'|], StringSplitOptions.RemoveEmptyEntries)
+            |> Array.map strToMt
+            |> Array.toList
+
+    override _.Write(writer, value, _) =
+        if value.IsEmpty then
+            writer.WriteStringValue("")
+        else
+            value |> List.map mtToString |> String.concat ", " |> writer.WriteStringValue
+
+// ────────────────────────────────────────────────────────────────────────────────
+//                               НАСТРОЙКА JSON
+// ────────────────────────────────────────────────────────────────────────────────
+
+let jsonOptions = JsonSerializerOptions(
+    WriteIndented = true,
+    //PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+    PropertyNamingPolicy = null,
+    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All)
+)
+
+do
+    jsonOptions.Converters.Add(CourseTypeConverter())
+    jsonOptions.Converters.Add(WorkHoursStringConverter())
+    jsonOptions.Converters.Add(MonitoringTypesStringConverter())
 
 // Сериализация
 let serializeCourse (course: Course) : string =
@@ -61,30 +106,25 @@ let deserializeCourse (json: string) : Course =
 let deserializeCourseList (json: string) : Course list =
     JsonSerializer.Deserialize<Course list>(json, jsonOptions)
 
-// Работа с файлами
+// Чтение — без BOM
 let saveToFile (filename: string) (courses: Course list) =
     try
         let json = serializeCourseList courses
-        System.IO.File.WriteAllText(filename, json)
-        printfn "✓ Сохранено %d курсов в файл: %s" courses.Length filename
+        use sw = new System.IO.StreamWriter(filename, false, System.Text.Encoding.UTF8)
+        sw.Write(json)
+        printfn "✓ Сохранено"
         true
-    with ex ->
-        printfn "✗ Ошибка при сохранении: %s" ex.Message
-        false
+    with _ -> false
 
-let loadFromFile (filename: string) : Course list =
+
+let loadFromFile (filename: string) =
     try
         if System.IO.File.Exists(filename) then
-            let json = System.IO.File.ReadAllText(filename)
-            let courses = deserializeCourseList json
-            printfn "✓ Загружено %d курсов из файла: %s" courses.Length filename
-            courses
-        else
-            printfn "⚠ Файл не найден: %s" filename
-            []
-    with ex ->
-        printfn "✗ Ошибка при загрузке файла %s: %s" filename ex.Message
-        []
+            use sr = new System.IO.StreamReader(filename, System.Text.Encoding.UTF8, detectEncodingFromByteOrderMarks = false)
+            let json = sr.ReadToEnd()
+            deserializeCourseList json
+        else []
+    with _ -> []
 
 // Вспомогательные функции для парсинга
 let parseBlockCode (s: string) : FgosBlockCode option =
@@ -204,6 +244,7 @@ module ConsoleDSL =
         
         printf "Код курса: "
         let code = Console.ReadLine()
+        //let code = rawCode.Trim().TrimStart('[').TrimEnd(']')
         
         printf "Русское название: "
         let russianName = Console.ReadLine()

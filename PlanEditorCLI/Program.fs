@@ -9,7 +9,7 @@ let createSampleCourses() : Course list =
     [
         // Пример 1: Английский язык
         { emptyCourse with
-            Code = "[060139]"
+            Code = "060139"
             RussianName = "Английский язык в сфере профессиональной коммуникации"
             EnglishName = "English for Professional Communication"
             Type = Base
@@ -28,7 +28,7 @@ let createSampleCourses() : Course list =
         
         // Пример 2: Математическая логика
         { emptyCourse with
-            Code = "[031539]"
+            Code = "031539"
             RussianName = "Дополнительные главы математической логики и теории алгоритмов"
             EnglishName = "Additional Chapters of Mathematical Logic and Algorithm Theory"
             Type = Base
@@ -47,7 +47,7 @@ let createSampleCourses() : Course list =
         
         // Пример 3: Практика
         { emptyCourse with
-            Code = "[070911]"
+            Code = "070911"
             RussianName = "Учебная (ознакомительная) практика"
             EnglishName = "Professional (Introductory) Training"
             Type = Base
@@ -87,6 +87,8 @@ let showMainMenu() =
 [<EntryPoint>]
 let main argv =
     Console.Clear()
+    Console.OutputEncoding <- Text.Encoding.UTF8
+    Console.InputEncoding <- Text.Encoding.UTF8
     printfn "Добро пожаловать в Редактор учебного плана!"
     printfn "Версия 1.0 | Для СПбГУ | Программная инженерия"
     printfn ""
