@@ -1,5 +1,5 @@
 ﻿open PlanEditor.BySemesterModel
-
+open PlanEditor.ExcelExport
 
 let competencies =
     [ "УК-1",
@@ -124,3 +124,5 @@ let up =
       Semesters = [ semester5 ] }
 
 printfn "%A" up
+
+up |> planToPlanDto |> exportToExcel @"out.xlsx"
