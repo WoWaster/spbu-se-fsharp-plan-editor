@@ -10,16 +10,16 @@ let parseWorkHours (s: string) : WorkHoursDistribution =
         |> Array.toList
 
     match nums with
-    | [l; se; c; p; lb; col; cc; ia; gi; wtp; wt; wmm; cci; ma; tiw] ->
+    | [l; se; c; p; lb; cw; col; cc; ia; wtp; wt; wmm; cci; ma; tiw] ->
         { Lecture = l
           Seminar = se
           Consultation = c
           Practical = p
           Lab = lb
+          ControlWorks = cw
           Colloquium = col
           CurrentControl = cc
           InterimAssessment = ia
-          GuidedIndependent = gi
           WithTeacherPresence = wtp
           WithTeacher = wt
           WithMethodologicalMaterials = wmm
@@ -57,8 +57,8 @@ type WorkHoursBuilder() =
     [<CustomOperation("interimAssessment")>]
     member _.InterimAssessment(state, v: int) = { state with InterimAssessment = v }
 
-    [<CustomOperation("guidedIndependent")>]
-    member _.GuidedIndependent(state, v: int) = { state with GuidedIndependent = v }
+    [<CustomOperation("controlWorks")>]
+    member _.ControlWorks(state, v: int) = { state with ControlWorks = v }
 
     [<CustomOperation("withTeacherPresence")>]
     member _.WithTeacherPresence(state, v: int) = { state with WithTeacherPresence = v }
@@ -99,7 +99,7 @@ type ImplementationBuilder() =
     member _.Trajectory(state, t: string) = { state with Trajectory = t }
 
     [<CustomOperation("monitoring")>]
-    member _.Monitoring(state, mts: MonitoringType list) = { state with MonitoringTypes = mts }
+    member _.Monitoring(state, mts: string) = { state with MonitoringTypes = mts }
 
     [<CustomOperation("workHours")>]
     member _.WorkHours(state, wh: WorkHoursDistribution) = { state with WorkHours = wh }

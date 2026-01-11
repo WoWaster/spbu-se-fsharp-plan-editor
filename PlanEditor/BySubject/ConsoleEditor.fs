@@ -38,43 +38,9 @@ type WorkHoursStringConverter() =
         writer.WriteStringValue(
             $"{value.Lecture} {value.Seminar} {value.Consultation} {value.Practical} " +
             $"{value.Lab} {value.Colloquium} {value.CurrentControl} {value.InterimAssessment} " +
-            $"{value.GuidedIndependent} {value.WithTeacherPresence} {value.WithTeacher} " +
+            $"{value.ControlWorks} {value.WithTeacherPresence} {value.WithTeacher} " +
             $"{value.WithMethodologicalMaterials} {value.CurrentControlIndependent} " +
             $"{value.MidtermAssessment} {value.TotalIndependentWork}")
-
-// 3. MonitoringTypes — строка с запятыми (например "зачёт, экзамен")
-let mtToString = function
-    | Экзамен                  -> "экзамен"
-    | Зачет                    -> "зачёт"
-    | АттестационноеИспытание  -> "аттестационное испытание"
-    | ТекущийКонтроль          -> "текущий контроль"
-
-let strToMt (s:string) =
-    match s.Trim().ToLowerInvariant() with
-    | "экзамен"                          -> Экзамен
-    | "зачёт" | "зачет"                  -> Зачет
-    | "аттестационное испытание"
-    | "аттестационноеиспытание"
-    | "аттестация"                       -> АттестационноеИспытание
-    | "текущий контроль" | "текущийконтроль" | "контроль" -> ТекущийКонтроль
-    | _                                  -> failwith $"Неизвестная форма контроля: {s}"
-
-type MonitoringTypesStringConverter() =
-    inherit JsonConverter<MonitoringType list>()
-
-    override _.Read(reader, _, _) =
-        let str = reader.GetString()
-        if String.IsNullOrWhiteSpace str then []
-        else
-            str.Split([|','; ';'|], StringSplitOptions.RemoveEmptyEntries)
-            |> Array.map strToMt
-            |> Array.toList
-
-    override _.Write(writer, value, _) =
-        if value.IsEmpty then
-            writer.WriteStringValue("")
-        else
-            value |> List.map mtToString |> String.concat ", " |> writer.WriteStringValue
 
 // ────────────────────────────────────────────────────────────────────────────────
 //                               НАСТРОЙКА JSON
@@ -90,7 +56,6 @@ let jsonOptions = JsonSerializerOptions(
 do
     jsonOptions.Converters.Add(CourseTypeConverter())
     jsonOptions.Converters.Add(WorkHoursStringConverter())
-    jsonOptions.Converters.Add(MonitoringTypesStringConverter())
 
 // Сериализация
 let serializeCourse (course: Course) : string =
@@ -141,18 +106,19 @@ let parseCourseType (s: string) : CourseType option =
     | "факультатив" | "facultative" | "3" -> Some Facultative
     | _ -> None
 
-let parseMonitoringType (s: string) : MonitoringType option =
-    match s.ToLower().Trim() with
-    | "экзамен" | "1" -> Some Экзамен
-    | "зачет" | "2" -> Some Зачет
-    | "аттестационноеиспытание" | "аттестация" | "3" -> Some АттестационноеИспытание
-    | "текущийконтроль" | "контроль" | "4" -> Some ТекущийКонтроль
-    | _ -> None
-
-let parseMonitoringTypeList (input: string) : MonitoringType list =
-    input.Split([|','; ' '|], StringSplitOptions.RemoveEmptyEntries)
-    |> Array.choose parseMonitoringType
-    |> Array.toList
+let parseMonitoringTypeList (input: string) : string =
+    if String.IsNullOrWhiteSpace(input) then ""
+    else
+        let parts = input.Split([|','; ' '|], StringSplitOptions.RemoveEmptyEntries)
+        let converted = parts |> Array.map (fun s ->
+            match s.ToLower().Trim() with
+            | "1" | "экзамен" -> "Экзамен"
+            | "2" | "зачет" | "зачёт" -> "Зачет"
+            | "3" | "аттестационноеиспытание" | "аттестация" -> "АттестационноеИспытание"
+            | "4" | "текущийконтроль" | "контроль" -> "ТекущийКонтроль"
+            | other -> other  // Оставляем как есть
+        )
+        String.Join(", ", converted)
 
 // Парсер строки WorkHours в WorkHoursDistribution (из DSL.fs)
 let parseWorkHours (s: string) : WorkHoursDistribution =
@@ -162,16 +128,16 @@ let parseWorkHours (s: string) : WorkHoursDistribution =
         |> Array.toList
 
     match nums with
-    | [l; se; c; p; lb; col; cc; ia; gi; wtp; wt; wmm; cci; ma; tiw] ->
+    | [l; se; c; p; lb; cw; col; cc; ia; wtp; wt; wmm; cci; ma; tiw] ->
         { Lecture = l
           Seminar = se
           Consultation = c
           Practical = p
           Lab = lb
+          ControlWorks = cw
           Colloquium = col
           CurrentControl = cc
           InterimAssessment = ia
-          GuidedIndependent = gi
           WithTeacherPresence = wtp
           WithTeacher = wt
           WithMethodologicalMaterials = wmm
@@ -386,7 +352,7 @@ module ConsoleDSL =
                 printfn "  2. Трудоёмкость: %d" current.LaborIntensity
                 printfn "  3. Блок: %A" current.BlockCode
                 printfn "  4. Компетенции: %A" current.Competences
-                printfn "  5. Формы контроля: %A" current.MonitoringTypes
+                printfn "  5. Формы контроля: %s" current.MonitoringTypes
                 printfn "  6. Распределение часов"
                 printfn "  7. Реализация"
                 printfn "  8. Траектория"
@@ -708,5 +674,5 @@ module QuickDSL =
             LaborIntensity = labor
             BlockCode = block
             Competences = []
-            MonitoringTypes = []
+            MonitoringTypes = ""
             WorkHours = emptyWorkHours }

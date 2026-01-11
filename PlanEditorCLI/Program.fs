@@ -2,6 +2,7 @@
 
 open PlanEditor.Types
 open PlanEditor.ConsoleEditor
+open PlanEditor.ExcelExport
 open System
 
 // Функция для создания примерных данных
@@ -19,7 +20,7 @@ let createSampleCourses() : Course list =
                     LaborIntensity = 2
                     BlockCode = Disciplines
                     Competences = ["УК-4"]
-                    MonitoringTypes = [Зачет]
+                    MonitoringTypes = "Зачет"
                     WorkHours = parseWorkHours "0 0 2 32 0 0 0 0 2 0 0 36 0 0 58"
                     Realization = ""
                     Trajectory = "" }
@@ -38,7 +39,7 @@ let createSampleCourses() : Course list =
                     LaborIntensity = 5
                     BlockCode = Disciplines
                     Competences = ["ОПК-4"; "ОПК-6"]
-                    MonitoringTypes = [Экзамен]
+                    MonitoringTypes = "Экзамен"
                     WorkHours = parseWorkHours "15 0 2 15 0 0 0 0 2 30 0 76 0 40 19"
                     Realization = ""
                     Trajectory = "" }
@@ -57,7 +58,7 @@ let createSampleCourses() : Course list =
                     LaborIntensity = 4
                     BlockCode = PracticalTraining
                     Competences = ["УК-2"; "УКМ-1"; "УКМ-4"]
-                    MonitoringTypes = [Зачет]
+                    MonitoringTypes = "Зачет"
                     WorkHours = parseWorkHours "4 12 0 0 0 0 0 2 70 16 40 0 0 22 0"
                     Realization = ""
                     Trajectory = "" }
@@ -69,16 +70,17 @@ let createSampleCourses() : Course list =
 let showMainMenu() =
     printfn ""
     printfn "╔════════════════════════════════════════╗"
-    printfn "║     РЕДАКТОР УЧЕБНОГО ПЛАНА СПбГУ     ║"
+    printfn "║     РЕДАКТОР УЧЕБНОГО ПЛАНА СПбГУ      ║"
     printfn "╚════════════════════════════════════════╝"
     printfn ""
     printfn "Основное меню:"
     printfn "┌─────────────────────────────────────────┐"
     printfn "│ 1. Запустить интерактивный редактор     │"
-    printfn "│ 2. Создать пример и сохранить в файл   │"
-    printfn "│ 3. Загрузить из файла                  │"
-    printfn "│ 4. Проверить автосохранение            │"
-    printfn "│ 5. Выйти из программы                  │"
+    printfn "│ 2. Создать пример и сохранить в файл    │"
+    printfn "│ 3. Загрузить из файла                   │"
+    printfn "│ 4. Проверить автосохранение             │"
+    printfn "│ 5. Экспорт в Excel (out.xlsx)           │"
+    printfn "│ 6. Выйти из программы                   │"
     printfn "└─────────────────────────────────────────┘"
     printf "\nВыбор: "
     Console.ReadLine().Trim()
@@ -226,8 +228,37 @@ let main argv =
                                 printfn "✗ Автосохранение пусто."
                     else
                         printfn "\nАвтосохранение не найдено."
-                    
+                
                 | "5" ->
+                    printf "\nВведите имя JSON-файла с курсами для экспорта в Excel: "
+                    let jsonFile = Console.ReadLine().Trim()
+                    
+                    if not (System.IO.File.Exists jsonFile) then
+                        printfn "Файл не найден: %s" jsonFile
+                    else
+                        try
+                            let courses = loadFromFile jsonFile
+                            
+                            if courses.IsEmpty then
+                                printfn "В файле %s нет курсов (или файл повреждён)" jsonFile
+                            else
+                                printf "Имя выходного Excel-файла [out.xlsx]: "
+                                let xlsxInput = Console.ReadLine().Trim()
+                                let xlsxFilename = 
+                                    if String.IsNullOrWhiteSpace xlsxInput 
+                                    then "out.xlsx" 
+                                    else xlsxInput
+                                
+                                printfn "Экспортирую %d курсов из %s в %s..." 
+                                    courses.Length jsonFile xlsxFilename
+                                
+                                exportToExcel xlsxFilename courses
+                                printfn "✓ Экспорт успешно завершён"
+                        with ex ->
+                            printfn "Ошибка при обработке:"
+                            printfn "  %s" ex.Message
+                    
+                | "6" ->
                     // Выход
                     printfn "\nЗавершение работы..."
                     printfn "Спасибо за использование Редактора учебного плана!"

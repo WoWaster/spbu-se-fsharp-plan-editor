@@ -23,10 +23,10 @@ type WorkHoursDistribution ={
       Consultation: int
       Practical: int
       Lab: int
+      ControlWorks: int
       Colloquium: int
       CurrentControl: int
       InterimAssessment: int
-      GuidedIndependent: int
       WithTeacherPresence: int
       WithTeacher: int
       WithMethodologicalMaterials: int
@@ -35,11 +35,11 @@ type WorkHoursDistribution ={
       TotalIndependentWork: int
     }
 
-type MonitoringType =
-    | Экзамен
-    | Зачет
-    | АттестационноеИспытание
-    | ТекущийКонтроль
+// type MonitoringType =
+//     | Экзамен
+//     | Зачет
+//     | АттестационноеИспытание
+//     | ТекущийКонтроль
 
 
 type FgosBlockCode =
@@ -54,7 +54,7 @@ type Implementation = {
     BlockCode: FgosBlockCode
     Realization: string
     Trajectory: string
-    MonitoringTypes: MonitoringType list
+    MonitoringTypes: string
     WorkHours: WorkHoursDistribution
     Competences: Competence list
 }
@@ -74,10 +74,10 @@ let emptyWorkHours = {
     Consultation = 0
     Practical = 0
     Lab = 0
+    ControlWorks = 0
     Colloquium = 0
     CurrentControl = 0
     InterimAssessment = 0
-    GuidedIndependent = 0
     WithTeacherPresence = 0
     WithTeacher = 0
     WithMethodologicalMaterials = 0
@@ -92,7 +92,7 @@ let emptyImplementation = {
     BlockCode = Disciplines
     Realization = ""
     Trajectory = ""
-    MonitoringTypes = []
+    MonitoringTypes = ""
     WorkHours = emptyWorkHours
     Competences = []
 }

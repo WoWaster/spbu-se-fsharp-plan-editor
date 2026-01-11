@@ -8,11 +8,14 @@
   <ItemGroup>
     <Compile Include="Types.fs" />
     <Compile Include="DSL.fs" />
-    <Compile Include="ConsoleEditor.fs"/>
+    <Compile Include="ConsoleEditor.fs" />
+    <Compile Include="ExcelExport.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="FSharp.SystemTextJson" Version="1.4.36" />
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
+    <PackageReference Include="ClosedXML.Report" Version="0.2.12" />
   </ItemGroup>
 
 </Project>
