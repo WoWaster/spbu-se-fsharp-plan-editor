@@ -114,7 +114,7 @@ let main argv =
                 printfn "  dotnet run -- --sample"
                 printfn "  dotnet run -- --load plan.json"
                 printfn "  dotnet run -- --editor"
-                0  // Убираем return
+                0
                 
             | "--sample" | "-s" ->
                 printfn "Создание примера учебного плана..."
@@ -125,7 +125,7 @@ let main argv =
                     printfn "  Создано %d курсов." sampleCourses.Length
                 else
                     printfn "✗ Не удалось сохранить пример."
-                0  // Убираем return
+                0
                 
             | "--load" | "-l" when argv.Length > 1 ->
                 let filename = argv.[1]
@@ -139,20 +139,19 @@ let main argv =
                         editor.StartEditor courses |> ignore
                 else
                     printfn "✗ Не удалось загрузить файл или файл пуст."
-                0  // Убираем return
+                0
                 
             | "--editor" | "-e" ->
                 printfn "Запуск интерактивного редактора..."
                 let editor = InteractiveEditor()
                 editor.StartEditor [] |> ignore
-                0  // Убираем return
+                0
                 
             | _ ->
                 printfn "Неизвестный аргумент: %s" argv.[0]
                 printfn "Используйте --help для справки."
-                1  // Убираем return
+                1
         
-        // Интерактивный режим (без аргументов)
         else
             let mutable continueLoop = true
             
@@ -279,4 +278,4 @@ let main argv =
         printfn ""
         printfn "Нажмите Enter для выхода..."
         Console.ReadLine() |> ignore
-        1  // Код ошибки
+        1

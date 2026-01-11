@@ -42,13 +42,8 @@ type WorkHoursStringConverter() =
             $"{value.WithMethodologicalMaterials} {value.CurrentControlIndependent} " +
             $"{value.MidtermAssessment} {value.TotalIndependentWork}")
 
-// ────────────────────────────────────────────────────────────────────────────────
-//                               НАСТРОЙКА JSON
-// ────────────────────────────────────────────────────────────────────────────────
-
 let jsonOptions = JsonSerializerOptions(
     WriteIndented = true,
-    //PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     PropertyNamingPolicy = null,
     Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All)
 )
@@ -57,21 +52,18 @@ do
     jsonOptions.Converters.Add(CourseTypeConverter())
     jsonOptions.Converters.Add(WorkHoursStringConverter())
 
-// Сериализация
 let serializeCourse (course: Course) : string =
     JsonSerializer.Serialize(course, jsonOptions)
 
 let serializeCourseList (courses: Course list) : string =
     JsonSerializer.Serialize(courses, jsonOptions)
 
-// Десериализация
 let deserializeCourse (json: string) : Course =
     JsonSerializer.Deserialize<Course>(json, jsonOptions)
 
 let deserializeCourseList (json: string) : Course list =
     JsonSerializer.Deserialize<Course list>(json, jsonOptions)
 
-// Чтение — без BOM
 let saveToFile (filename: string) (courses: Course list) =
     try
         let json = serializeCourseList courses
@@ -116,11 +108,10 @@ let parseMonitoringTypeList (input: string) : string =
             | "2" | "зачет" | "зачёт" -> "Зачет"
             | "3" | "аттестационноеиспытание" | "аттестация" -> "АттестационноеИспытание"
             | "4" | "текущийконтроль" | "контроль" -> "ТекущийКонтроль"
-            | other -> other  // Оставляем как есть
+            | other -> other
         )
         String.Join(", ", converted)
 
-// Парсер строки WorkHours в WorkHoursDistribution (из DSL.fs)
 let parseWorkHours (s: string) : WorkHoursDistribution =
     let nums =
         s.Split(' ', System.StringSplitOptions.RemoveEmptyEntries)
@@ -146,10 +137,7 @@ let parseWorkHours (s: string) : WorkHoursDistribution =
           TotalIndependentWork = tiw }
     | _ -> failwith "WorkHours string must contain exactly 15 integers"
 
-// DSL для создания курсов через консольный ввод
 module ConsoleDSL =
-
-    // Создаем Implementation через консоль
     let createImplementationFromConsole() : Implementation =
         printfn "\n=== Создание реализации ==="
         
@@ -193,7 +181,6 @@ module ConsoleDSL =
         printf "Распределение часов (15 чисел через пробел): "
         let workHoursStr = Console.ReadLine()
         
-        // Создаем Implementation напрямую, а не через computation expression
         { emptyImplementation with
             Semester = semester
             LaborIntensity = laborIntensity
@@ -204,13 +191,11 @@ module ConsoleDSL =
             Trajectory = trajectory
             WorkHours = parseWorkHours workHoursStr }
 
-    // Создаем Course через консоль
     let createCourseFromConsole() : Course =
         printfn "\n=== Создание нового курса ==="
         
         printf "Код курса: "
         let code = Console.ReadLine()
-        //let code = rawCode.Trim().TrimStart('[').TrimEnd(']')
         
         printf "Русское название: "
         let russianName = Console.ReadLine()
@@ -245,15 +230,12 @@ module ConsoleDSL =
             else
                 []
         
-        // Создаем Course напрямую, а не через computation expression
         { emptyCourse with
             Code = code
             RussianName = russianName
             EnglishName = englishName
             Type = courseType
             Implementations = implementations }
-
-    // Функция для редактирования существующего курса
     let editCourseWithDSL (originalCourse: Course) : Course =
         let rec editLoop (current: Course) =
             printfn "\n=== Редактирование курса ==="

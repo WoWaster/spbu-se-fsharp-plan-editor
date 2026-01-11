@@ -35,12 +35,6 @@ type WorkHoursDistribution ={
       TotalIndependentWork: int
     }
 
-// type MonitoringType =
-//     | Экзамен
-//     | Зачет
-//     | АттестационноеИспытание
-//     | ТекущийКонтроль
-
 
 type FgosBlockCode =
     | Disciplines
