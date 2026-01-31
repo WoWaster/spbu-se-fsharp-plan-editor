@@ -1,7 +1,8 @@
 ﻿open PlanEditor.BySemesterModel
 open PlanEditor.ExcelExport
+open PlanEditor.BySemesterDSL
 
-let competencies =
+let upCompetencies =
     [ "УК-1",
       "Способен осуществлять поиск, критический анализ и синтез информации, применять системный подход для решения поставленных задач"
       "УК-3", "Способен осуществлять социальное взаимодействие и реализовывать свою роль в команде"
@@ -19,109 +20,142 @@ let competencies =
       "Способен демонстрировать базовые знания математических и естественных наук, программирования и информационных технологий"
       "ПКП-10-А-ПК-1", "Осуществляет управление архитектурой изолированной (неинтегрированной) программной системы"
       "ПКП-13-А-ПК-4", "Осуществляет оценки и управление рисками" ]
+    |> Map.ofList
 
+let cw =
+    classroomWork {
+        lectures 26
+        practicalClasses 34
+        intermediateAssessment 4
+    }
+
+let iw =
+    independentWork {
+        inInstructorPresence 8
+        usingMaterials 34
+        intermediateAssessment 2
+    }
+
+let d =
+    discipline {
+        number 73519
+        name "Безопасность жизнедеятельности"
+        englishName "Life Safety"
+        assessmentForms [ Credit ]
+        classroomWork cw
+        independentWork iw
+    }
 
 let bzhd =
-    { FgosBlockCode = Disciplines
-      Workload = 3
-      Competencies = [ "УК-8" ]
-      Disciplines =
-        [ { Number = 073519
-            Name = "Безопасность жизнедеятельности"
-            EnglishName = "Life Safety"
-            Realization = ""
-            Trajectory = ""
-            AssessmentForms = [ Credit ]
-            ClassroomWork =
-              { defaultClassroomWork with
-                  Lectures = 26
-                  PracticalClasses = 34
-                  IntermediateAssessment = 4 }
-            IndependentWork =
-              { defaultIndependentWork with
-                  InInstructorPresence = 8
-                  UsingMaterials = 34
-                  IntermediateAssessment = 2 }
-            InteractiveHours = 0 } ] }
+    simpleBlock {
+        workload 3
+        competencies [ "УК-8" ]
+        disciplines [ d ]
+    }
 
-let practicalTrainingStandard =
-    { FgosBlockCode = PracticalTraining
-      Workload = 3
-      Competencies =
-        [ "ОПК-1"
-          "ОПК-2"
-          "ОПК-3"
-          "ОПК-4"
-          "ПКА-1"
-          "ПКП-10-А-ПК-1"
-          "ПКП-13-А-ПК-4"
-          "УК-1"
-          "УК-3" ]
-      Disciplines =
-        [ { Number = 064793
-            Name = "Учебная практика 2 (научно-исследовательская работа)"
-            EnglishName = "Practical Training 2 (Research Project)"
-            Realization = ""
-            Trajectory = ""
-            AssessmentForms = [ Credit ]
-            ClassroomWork =
-              { defaultClassroomWork with
-                  IntermediateAssessment = 2 }
-            IndependentWork =
-              { defaultIndependentWork with
-                  InInstructorPresence = 30
-                  UsingMaterials = 68
-                  IntermediateAssessment = 8 }
-            InteractiveHours = 8 } ] }
-
-let teorverTop =
-    { FgosBlockCode = Disciplines
-      Workload = 2
-      Competencies = [ "ОПК-1"; "ПКА-1" ]
-      Disciplines =
-        [ { Number = 002188
-            Name = "Теория вероятностей и математическая статистика"
-            EnglishName = "Probability Theory and Mathematical Statistics"
-            Realization = "осн курс"
-            Trajectory = "тр 3 г"
-            AssessmentForms = [ Credit ]
-            ClassroomWork =
-              { defaultClassroomWork with
-                  Lectures = 30
-                  PracticalClasses = 12
-                  ControlWorks = 2
-                  IntermediateAssessment = 2 }
-            IndependentWork =
-              { defaultIndependentWork with
-                  UsingMaterials = 18
-                  IntermediateAssessment = 8 }
-            InteractiveHours = 12 } ] }
-
-let semester5 =
-    { Number = 5
-      BasicBlocks =
-        { SimpleBlocks = [ bzhd ]
-          ComplexBlocks =
-            [ { Name = ":"
-                Tracks =
-                  [ "Технологии программирования  — \"общий профиль\"", [ practicalTrainingStandard ]
-                    "Технологии программирования — \"профиль ТОП ИТ\"", [ teorverTop ] ]
-                  |> Map.ofList } ] }
-      ElectiveBlocks =
-        { SimpleBlocks = []
-          ComplexBlocks = [] } }
 
 let up =
-    { Name = "Технологии программирования"
-      EnglishName = "Technology Programming"
-      StudyLevel = Bachelor
-      Specialty = "02.03.03 Математическое обеспечение и администрирование информационных систем"
-      LanguagesOfInstruction = [ Russian; English ]
-      YearOfAdmission = 25
-      Code = 5162
-      Competencies = Map.ofList competencies
-      Semesters = [ semester5 ] }
+    plan {
+        name "Технологии программирования"
+        englishName "Technology Programming"
+        specialty "02.03.03 Математическое обеспечение и администрирование информационных систем"
+        yearOfAdmission 25
+        code 5162
+        competencies upCompetencies
 
-// printfn "%A" up
+        semesters
+            [ semester {
+                  number 5
 
+                  basicBlocks (
+                      blocks {
+                          simpleBlocks [ bzhd ]
+
+                          complexBlocks
+                              [ complexBlock {
+                                    name ":"
+
+                                    tracks (
+                                        [ "Технологии программирования  — \"общий профиль\"",
+                                          [ simpleBlock {
+                                                fgosBlockCode PracticalTraining
+                                                workload 3
+
+                                                competencies
+                                                    [ "ОПК-1"
+                                                      "ОПК-2"
+                                                      "ОПК-3"
+                                                      "ОПК-4"
+                                                      "ПКА-1"
+                                                      "ПКП-10-А-ПК-1"
+                                                      "ПКП-13-А-ПК-4"
+                                                      "УК-1"
+                                                      "УК-3" ]
+
+                                                disciplines
+                                                    [ discipline {
+                                                          number 064793
+                                                          name "Учебная практика 2 (научно-исследовательская работа)"
+                                                          englishName "Practical Training 2 (Research Project)"
+                                                          assessmentForms [ Credit ]
+
+                                                          classroomWork (
+                                                              // TODO: Fix name clash
+                                                              ClassroomWorkBuilder() { intermediateAssessment 2 }
+                                                          )
+
+                                                          independentWork (
+                                                              IndependentWorkBuilder() {
+                                                                  inInstructorPresence 30
+                                                                  usingMaterials 68
+                                                                  intermediateAssessment 8
+                                                              }
+                                                          )
+
+                                                          interactiveHours 8
+                                                      } ]
+                                            } ]
+                                          "Технологии программирования — \"профиль ТОП ИТ\"",
+                                          [ simpleBlock {
+                                                workload 2
+                                                competencies [ "ОПК-1"; "ПКА-1" ]
+
+                                                disciplines
+                                                    [ discipline {
+                                                          number 002188
+                                                          name "Теория вероятностей и математическая статистика"
+                                                          englishName "Probability Theory and Mathematical Statistics"
+                                                          realization "осн курс"
+                                                          trajectory "тр 3 г"
+                                                          assessmentForms [ Credit ]
+
+                                                          classroomWork (
+                                                              // TODO: Fix name clash
+                                                              ClassroomWorkBuilder() {
+                                                                  lectures 30
+                                                                  practicalClasses 12
+                                                                  controlWorks 2
+                                                                  intermediateAssessment 2
+                                                              }
+                                                          )
+
+                                                          independentWork (
+                                                              IndependentWorkBuilder() {
+                                                                  usingMaterials 18
+                                                                  intermediateAssessment 8
+                                                              }
+                                                          )
+
+                                                          interactiveHours 12
+                                                      } ]
+                                            } ] ]
+                                        |> Map.ofList
+                                    )
+                                } ]
+                      }
+                  )
+              } ]
+    }
+
+printfn "%A" up
 up |> exportToExcel @"out.xlsx"

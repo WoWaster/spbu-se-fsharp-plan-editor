@@ -5,8 +5,8 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
-  <ItemGroup>
-		<Compile Include="BySemesterModel.fs" />
+  <ItemGroup><Compile Include="BySemesterModel.fs" /><Compile Include="BySemesterDSL.fs" />
+		
 		<Compile Include="ExcelExport.fs" />
 
   </ItemGroup>

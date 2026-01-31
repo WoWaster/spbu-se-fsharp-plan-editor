@@ -94,7 +94,6 @@ type SimpleBlock =
       Competencies: string list
       Disciplines: Discipline list }
 
-
 type ComplexBlock =
     { Name: string
       Tracks: Map<string, SimpleBlock list> }
