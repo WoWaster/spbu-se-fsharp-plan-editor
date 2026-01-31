@@ -1,5 +1,5 @@
 ﻿open PlanEditor.BySemesterModel
-
+open PlanEditor.ExcelExport
 
 let competencies =
     [ "УК-1",
@@ -122,4 +122,6 @@ let up =
       Competencies = Map.ofList competencies
       Semesters = [ semester5 ] }
 
-printfn "%A" up
+// printfn "%A" up
+
+up |> exportToExcel @"out.xlsx"
