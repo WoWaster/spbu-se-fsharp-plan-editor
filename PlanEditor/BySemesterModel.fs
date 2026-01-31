@@ -1,5 +1,27 @@
 module PlanEditor.BySemesterModel
 
+// Модель учебного плана в ИС СПбГУ в упрощенном случае выглядит примерно так.
+//
+// Существует сама сущность учебного плана с некоторой метаинформацией, в неё вложены семестры.
+// Каждый семестр состоит из трех частей:
+// 1. Базовая часть.
+// 2. Вариативная часть.
+// 3. Факультативная часть.
+//
+// Стоит отметить, что Вариативная часть --- наследие старых ФГОС, и расположение предметов в базовой
+// или вариативной части --- методический, а не формальный вопрос.
+// Например английский в текущем исполнении обычно оказывается в Базовой части, хотя формально
+// должен быть в Вариативной.
+//
+// Каждая из частей может содержать один из двух видов блоков:
+// 1. Простой блок.
+// 2. Сложный блок.
+//
+// Простой блок --- типичный способ выразить дисциплину по выбору, в частном случае --- единичный предмет.
+// Сложный блок (он же блок дисциплин по выбору) позволяет выстроить трек сквозь несколько семестров,
+// в таком случае требуется и название набору треков, и каждому конкретному треку.
+// При этом внутри сложного блока естественным образом содержатся простые блоки.
+
 type FgosBlockCode =
     | Disciplines
     | PracticalTraining
@@ -9,14 +31,6 @@ type AssessmentForm =
     | Exam
     | Credit
     | AttestationTest
-
-// Эти данные вынесены в данной модели в один тип, поскольку могут быть общими
-// как для одной дисциплины, так и для блока дисциплин.
-type CommonInfo =
-    { FgosBlockCode: FgosBlockCode
-      Workload: int
-      Competencies: string list
-      AssessmentForms: AssessmentForm list }
 
 type ClassroomWork =
     { Lectures: int
@@ -69,50 +83,31 @@ type Discipline =
       EnglishName: string
       Realization: string
       Trajectory: string
+      AssessmentForms: AssessmentForm list
       ClassroomWork: ClassroomWork
       IndependentWork: IndependentWork
       InteractiveHours: int }
 
-type BaseDiscipline =
-    { Info: CommonInfo
-      Discipline: Discipline }
-
-type BaseDisciplineBlockItem =
-    { SubBlockName: string
-      Disciplines: BaseDiscipline list }
-
-type BaseDisciplineBlock =
-    { BlockName: string
-      Items: BaseDisciplineBlockItem list }
-
-type ElectiveDisciplines =
-    { Info: CommonInfo
+type SimpleBlock =
+    { FgosBlockCode: FgosBlockCode
+      Workload: int
+      Competencies: string list
       Disciplines: Discipline list }
 
-type ElectiveDisciplinesBlockItem =
-    { SubBlockName: string
-      Disciplines: ElectiveDisciplines list }
 
-type ElectiveDisciplinesBlock =
-    { BlockName: string
-      Items: ElectiveDisciplinesBlockItem list }
+type ComplexBlock =
+    { Name: string
+      Tracks: Map<string, SimpleBlock list> }
 
-// Жутко вложенный тип, зато абсолютно безопасный с точки зрения того, что дозволенно упихивать в УП
-// TODO: Поддержать факультативы
-type SemesterItem =
-    | BaseDiscipline of BaseDiscipline
-    // На самом деле хороший вопрос как это правильно должно быть оформлено.
-    // То есть довольно странно, что блоки дисциплин бывают в обязательной части.
-    // Однако английский сделан именно так (а физра по-другому...)
-    // А в ТП вообще в вариативной части есть блоки из одного предмета...
-    // TODO: Спросить Фролову???
-    | BaseDisciplineBlock of BaseDisciplineBlock
-    | ElectiveDisciplines of ElectiveDisciplines
-    | ElectiveDisciplinesBlock of ElectiveDisciplinesBlock
+type Blocks =
+    { SimpleBlocks: SimpleBlock list
+      ComplexBlocks: ComplexBlock list }
 
+// TODO: Факультативы
 type Semester =
     { Number: int
-      Disciplines: SemesterItem list }
+      BasicBlocks: Blocks
+      ElectiveBlocks: Blocks }
 
 // TODO: Специалитет?
 type StudyLevel =

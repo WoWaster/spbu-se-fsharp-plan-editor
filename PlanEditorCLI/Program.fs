@@ -22,98 +22,97 @@ let competencies =
 
 
 let bzhd =
-    { Info =
-        { FgosBlockCode = Disciplines
-          Workload = 3
-          Competencies = [ "УК-8" ]
-          AssessmentForms = [ Credit ] }
-      Discipline =
-        { Number = 073519
-          Name = "Безопасность жизнедеятельности"
-          EnglishName = "Life Safety"
-          Realization = ""
-          Trajectory = ""
-          ClassroomWork =
-            { defaultClassroomWork with
-                Lectures = 26
-                PracticalClasses = 34
-                IntermediateAssessment = 4 }
-          IndependentWork =
-            { defaultIndependentWork with
-                InInstructorPresence = 8
-                UsingMaterials = 34
-                IntermediateAssessment = 2 }
-          InteractiveHours = 0 } }
+    { FgosBlockCode = Disciplines
+      Workload = 3
+      Competencies = [ "УК-8" ]
+      Disciplines =
+        [ { Number = 073519
+            Name = "Безопасность жизнедеятельности"
+            EnglishName = "Life Safety"
+            Realization = ""
+            Trajectory = ""
+            AssessmentForms = [ Credit ]
+            ClassroomWork =
+              { defaultClassroomWork with
+                  Lectures = 26
+                  PracticalClasses = 34
+                  IntermediateAssessment = 4 }
+            IndependentWork =
+              { defaultIndependentWork with
+                  InInstructorPresence = 8
+                  UsingMaterials = 34
+                  IntermediateAssessment = 2 }
+            InteractiveHours = 0 } ] }
 
 let practicalTrainingStandard =
-    { Info =
-        { FgosBlockCode = PracticalTraining
-          Workload = 3
-          Competencies =
-            [ "ОПК-1"
-              "ОПК-2"
-              "ОПК-3"
-              "ОПК-4"
-              "ПКА-1"
-              "ПКП-10-А-ПК-1"
-              "ПКП-13-А-ПК-4"
-              "УК-1"
-              "УК-3" ]
-          AssessmentForms = [ Credit ] }
-      Discipline =
-        { Number = 064793
-          Name = "Учебная практика 2 (научно-исследовательская работа)"
-          EnglishName = "Practical Training 2 (Research Project)"
-          Realization = ""
-          Trajectory = ""
-          ClassroomWork =
-            { defaultClassroomWork with
-                IntermediateAssessment = 2 }
-          IndependentWork =
-            { defaultIndependentWork with
-                InInstructorPresence = 30
-                UsingMaterials = 68
-                IntermediateAssessment = 8 }
-          InteractiveHours = 8 } }
+    { FgosBlockCode = PracticalTraining
+      Workload = 3
+      Competencies =
+        [ "ОПК-1"
+          "ОПК-2"
+          "ОПК-3"
+          "ОПК-4"
+          "ПКА-1"
+          "ПКП-10-А-ПК-1"
+          "ПКП-13-А-ПК-4"
+          "УК-1"
+          "УК-3" ]
+      Disciplines =
+        [ { Number = 064793
+            Name = "Учебная практика 2 (научно-исследовательская работа)"
+            EnglishName = "Practical Training 2 (Research Project)"
+            Realization = ""
+            Trajectory = ""
+            AssessmentForms = [ Credit ]
+            ClassroomWork =
+              { defaultClassroomWork with
+                  IntermediateAssessment = 2 }
+            IndependentWork =
+              { defaultIndependentWork with
+                  InInstructorPresence = 30
+                  UsingMaterials = 68
+                  IntermediateAssessment = 8 }
+            InteractiveHours = 8 } ] }
 
 let teorverTop =
-    { Info =
-        { FgosBlockCode = Disciplines
-          Workload = 2
-          Competencies = [ "ОПК-1"; "ПКА-1" ]
-          AssessmentForms = [ Credit ] }
-      Discipline =
-        { Number = 002188
-          Name = "Теория вероятностей и математическая статистика"
-          EnglishName = "Probability Theory and Mathematical Statistics"
-          Realization = "осн курс"
-          Trajectory = "тр 3 г"
-          ClassroomWork =
-            { defaultClassroomWork with
-                Lectures = 30
-                PracticalClasses = 12
-                ControlWorks = 2
-                IntermediateAssessment = 2 }
-          IndependentWork =
-            { defaultIndependentWork with
-                UsingMaterials = 18
-                IntermediateAssessment = 8 }
-          InteractiveHours = 12 } }
+    { FgosBlockCode = Disciplines
+      Workload = 2
+      Competencies = [ "ОПК-1"; "ПКА-1" ]
+      Disciplines =
+        [ { Number = 002188
+            Name = "Теория вероятностей и математическая статистика"
+            EnglishName = "Probability Theory and Mathematical Statistics"
+            Realization = "осн курс"
+            Trajectory = "тр 3 г"
+            AssessmentForms = [ Credit ]
+            ClassroomWork =
+              { defaultClassroomWork with
+                  Lectures = 30
+                  PracticalClasses = 12
+                  ControlWorks = 2
+                  IntermediateAssessment = 2 }
+            IndependentWork =
+              { defaultIndependentWork with
+                  UsingMaterials = 18
+                  IntermediateAssessment = 8 }
+            InteractiveHours = 12 } ] }
 
 let semester5 =
     { Number = 5
-      Disciplines =
-        [ BaseDiscipline bzhd
-          BaseDisciplineBlock
-              { BlockName = ":"
-                Items =
-                  [ { SubBlockName = "Технологии программирования  — \"общий профиль\""
-                      Disciplines = [ practicalTrainingStandard ] }
-                    { SubBlockName = "Технологии программирования — \"профиль ТОП ИТ\""
-                      Disciplines = [ teorverTop ] } ] } ] }
+      BasicBlocks =
+        { SimpleBlocks = [ bzhd ]
+          ComplexBlocks =
+            [ { Name = ":"
+                Tracks =
+                  [ "Технологии программирования  — \"общий профиль\"", [ practicalTrainingStandard ]
+                    "Технологии программирования — \"профиль ТОП ИТ\"", [ teorverTop ] ]
+                  |> Map.ofList } ] }
+      ElectiveBlocks =
+        { SimpleBlocks = []
+          ComplexBlocks = [] } }
 
 let up =
-    { Name = "Технологии програмирования"
+    { Name = "Технологии программирования"
       EnglishName = "Technology Programming"
       StudyLevel = Bachelor
       Specialty = "02.03.03 Математическое обеспечение и администрирование информационных систем"
