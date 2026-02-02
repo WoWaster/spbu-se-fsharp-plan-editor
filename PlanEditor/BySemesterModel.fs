@@ -105,19 +105,36 @@ type SimpleBlock =
       Competencies: string list
       Disciplines: Discipline list }
 
+    static member Empty =
+        { FgosBlockCode = Disciplines
+          Workload = 0
+          Competencies = []
+          Disciplines = [] }
+
 type ComplexBlock =
     { Name: string
       Tracks: Map<string, SimpleBlock list> }
 
+    static member Empty = { Name = ""; Tracks = Map.empty }
+
 type Blocks =
     { SimpleBlocks: SimpleBlock list
       ComplexBlocks: ComplexBlock list }
+
+    static member Empty =
+        { SimpleBlocks = []
+          ComplexBlocks = [] }
 
 // TODO: Факультативы
 type Semester =
     { Number: int
       BasicPart: Blocks
       VariablePart: Blocks }
+
+    static member Empty =
+        { Number = 0
+          BasicPart = Blocks.Empty
+          VariablePart = Blocks.Empty }
 
 // TODO: Специалитет?
 type StudyLevel =
@@ -140,3 +157,14 @@ type Plan =
       Code: int
       Competencies: Map<string, string>
       Semesters: Semester list }
+
+    static member Empty =
+        { Plan.Name = ""
+          EnglishName = ""
+          StudyLevel = Bachelor
+          Specialty = ""
+          LanguagesOfInstruction = [ Russian; English ]
+          YearOfAdmission = 0
+          Code = 0
+          Competencies = Map.empty
+          Semesters = [] }

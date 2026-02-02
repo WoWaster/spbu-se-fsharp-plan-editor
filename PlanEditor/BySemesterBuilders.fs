@@ -130,11 +130,7 @@ type DisciplineBuilder() =
 // Simple Block
 // TODO: Is required?
 type SimpleBlockBuilder() =
-    member inline _.Yield _ =
-        { FgosBlockCode = Disciplines
-          Workload = 0
-          Competencies = []
-          Disciplines = [] }
+    member inline _.Yield _ = SimpleBlock.Empty
 
     member inline _.Run state = state
 
@@ -155,7 +151,7 @@ type SimpleBlockBuilder() =
 // Complex Block
 // TODO: Is required?
 type ComplexBlockBuilder() =
-    member _.Yield _ = { Name = ""; Tracks = Map.empty }
+    member _.Yield _ = ComplexBlock.Empty
     member inline _.Run state = state
 
     [<CustomOperation("name")>]
@@ -167,9 +163,7 @@ type ComplexBlockBuilder() =
 // Blocks
 // TODO: Is required?
 type BlocksBuilder() =
-    member _.Yield _ =
-        { SimpleBlocks = []
-          ComplexBlocks = [] }
+    member _.Yield _ = Blocks.Empty
 
     member inline _.Run state = state
 
@@ -181,14 +175,7 @@ type BlocksBuilder() =
 
 // Semester
 type SemesterBuilder() =
-    member _.Yield _ =
-        { Semester.Number = 0
-          BasicPart =
-            { SimpleBlocks = []
-              ComplexBlocks = [] }
-          VariablePart =
-            { SimpleBlocks = []
-              ComplexBlocks = [] } }
+    member _.Yield _ = Semester.Empty
 
     member inline _.Run state = state
 
@@ -203,16 +190,7 @@ type SemesterBuilder() =
 
 // Plan
 type PlanBuilder() =
-    member _.Yield(_) =
-        { Plan.Name = ""
-          EnglishName = ""
-          StudyLevel = Bachelor
-          Specialty = ""
-          LanguagesOfInstruction = [ Russian; English ]
-          YearOfAdmission = 26
-          Code = 9999
-          Competencies = Map.empty
-          Semesters = [] }
+    member _.Yield(_) = Plan.Empty
 
     [<CustomOperation("name")>]
     member inline _.SetName(state, s) = { state with Plan.Name = s }
@@ -310,10 +288,8 @@ type SimpleDisciplineProperty =
                           InteractiveHours = ih } ] }
 
 let simpleDisciplineEmpty =
-    { FgosBlockCode = Disciplines
-      Workload = 0
-      Competencies = []
-      Disciplines = [ Discipline.Empty ] }
+    { SimpleBlock.Empty with
+        Disciplines = [ Discipline.Empty ] }
 
 type SimpleDisciplineBuilder() =
     inherit DSLBuilder<SimpleBlock, SimpleDisciplineProperty>(simpleDisciplineEmpty, SimpleDisciplineProperty.Folder)
