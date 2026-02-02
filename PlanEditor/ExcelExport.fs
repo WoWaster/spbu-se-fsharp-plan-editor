@@ -193,32 +193,29 @@ let exportSemester (ws: IXLWorksheet) sem =
 
     placeHeaderLine ws "Базовая часть периода обучения"
 
-    if
-        List.length sem.BasicBlocks.SimpleBlocks
-        + List.length sem.BasicBlocks.ComplexBlocks = 0
-    then
+    if List.length sem.BasicPart.SimpleBlocks + List.length sem.BasicPart.ComplexBlocks = 0 then
         placeHeaderLine ws "Не предусмотрено"
     else
-        sem.BasicBlocks.SimpleBlocks |> List.iter (exportSimpleBlock ws)
+        sem.BasicPart.SimpleBlocks |> List.iter (exportSimpleBlock ws)
 
-        if List.length sem.BasicBlocks.ComplexBlocks <> 0 then
+        if List.length sem.BasicPart.ComplexBlocks <> 0 then
             placeHeaderLine ws $"Блок(и) дисциплин"
-            sem.BasicBlocks.ComplexBlocks |> List.iter (exportComplexBlock ws)
+            sem.BasicPart.ComplexBlocks |> List.iter (exportComplexBlock ws)
 
 
     placeHeaderLine ws "Вариативная часть периода обучения"
 
     if
-        List.length sem.ElectiveBlocks.SimpleBlocks
-        + List.length sem.ElectiveBlocks.ComplexBlocks = 0
+        List.length sem.VariablePart.SimpleBlocks
+        + List.length sem.VariablePart.ComplexBlocks = 0
     then
         placeHeaderLine ws "Не предусмотрено"
     else
-        sem.ElectiveBlocks.SimpleBlocks |> List.iter (exportSimpleBlock ws)
+        sem.VariablePart.SimpleBlocks |> List.iter (exportSimpleBlock ws)
 
-        if List.length sem.ElectiveBlocks.ComplexBlocks <> 0 then
+        if List.length sem.VariablePart.ComplexBlocks <> 0 then
             placeHeaderLine ws $"Блок(и) дисциплин"
-            sem.ElectiveBlocks.ComplexBlocks |> List.iter (exportComplexBlock ws)
+            sem.VariablePart.ComplexBlocks |> List.iter (exportComplexBlock ws)
 
     ()
 

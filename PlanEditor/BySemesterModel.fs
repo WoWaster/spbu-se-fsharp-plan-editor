@@ -116,8 +116,8 @@ type Blocks =
 // TODO: Факультативы
 type Semester =
     { Number: int
-      BasicBlocks: Blocks
-      ElectiveBlocks: Blocks }
+      BasicPart: Blocks
+      VariablePart: Blocks }
 
 // TODO: Специалитет?
 type StudyLevel =

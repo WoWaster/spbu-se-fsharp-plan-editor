@@ -183,10 +183,10 @@ type BlocksBuilder() =
 type SemesterBuilder() =
     member _.Yield _ =
         { Semester.Number = 0
-          BasicBlocks =
+          BasicPart =
             { SimpleBlocks = []
               ComplexBlocks = [] }
-          ElectiveBlocks =
+          VariablePart =
             { SimpleBlocks = []
               ComplexBlocks = [] } }
 
@@ -196,10 +196,10 @@ type SemesterBuilder() =
     member inline _.SetNumber(state, n) = { state with Semester.Number = n }
 
     [<CustomOperation("basicBlocks")>]
-    member inline _.SetBasicBlocks(state, blocks) = { state with BasicBlocks = blocks }
+    member inline _.SetBasicBlocks(state, blocks) = { state with BasicPart = blocks }
 
     [<CustomOperation("electiveBlocks")>]
-    member inline _.SetElectiveBlocks(state, blocks) = { state with ElectiveBlocks = blocks }
+    member inline _.SetElectiveBlocks(state, blocks) = { state with VariablePart = blocks }
 
 // Plan
 type PlanBuilder() =
