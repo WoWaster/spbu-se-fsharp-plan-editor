@@ -1,5 +1,4 @@
-﻿open PlanEditor.BySemesterModel
-open PlanEditor.ExcelExport
+﻿open PlanEditor.ExcelExport
 open PlanEditor.BySemesterDSL
 
 let upCompetencies =
@@ -43,7 +42,7 @@ let bzhd =
         number 73519
         name "Безопасность жизнедеятельности"
         englishName "Life Safety"
-        assessmentForms [ Credit ]
+        assessmentForms [ credit ]
         cw
         iw
     }
@@ -73,7 +72,7 @@ let up =
                                     tracks (
                                         [ "Технологии программирования  — \"общий профиль\"",
                                           [ simpleDiscipline {
-                                                fgosBlockCode PracticalTraining
+                                                fgosBlockCode fgosCodePracticalTraining
                                                 workload 3
 
                                                 competencies
@@ -90,7 +89,7 @@ let up =
                                                 number 064793
                                                 name "Учебная практика 2 (научно-исследовательская работа)"
                                                 englishName "Practical Training 2 (Research Project)"
-                                                assessmentForms [ Credit ]
+                                                assessmentForms [ credit ]
                                                 classroomWork { intermediateAssessment 2 }
 
                                                 independentWork {
@@ -110,7 +109,7 @@ let up =
                                                 englishName "Probability Theory and Mathematical Statistics"
                                                 realization "осн курс"
                                                 trajectory "тр 3 г"
-                                                assessmentForms [ Credit ]
+                                                assessmentForms [ credit ]
 
                                                 classroomWork {
                                                     lectures 30
@@ -125,7 +124,6 @@ let up =
                                                 }
 
                                                 interactiveHours 12
-
                                             } ] ]
                                         |> Map.ofList
                                     )

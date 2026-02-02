@@ -6,7 +6,7 @@
   <ItemGroup>
     <Compile Include="BySemesterModel.fs" />
     <Compile Include="DSLCommon.fs" />
-    <Compile Include="BySemesterDSL.fs" />
+    <Compile Include="BySemesterBuilders.fs" /><Compile Include="BySemesterDSL.fs" />
     <Compile Include="ExcelExport.fs" />
   </ItemGroup>
   <ItemGroup>
