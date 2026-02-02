@@ -249,9 +249,124 @@ type PlanBuilder() =
 
 let plan = PlanBuilder()
 
+[<RequireQualifiedAccess>]
+type SimpleDisciplineProperty =
+    | FgosBlockCode of FgosBlockCode
+    | Workload of int
+    | Competencies of string list
+    | Number of int
+    | Name of string
+    | EnglishName of string
+    | Realization of string
+    | Trajectory of string
+    | AssessmentForms of AssessmentForm list
+    | ClassroomWork of ClassroomWork
+    | IndependentWork of IndependentWork
+    | InteractiveHours of int
 
+    static member Folder (block: SimpleBlock) (prop: SimpleDisciplineProperty) =
+        match prop with
+        | FgosBlockCode code -> { block with FgosBlockCode = code }
+        | Workload n -> { block with Workload = n }
+        | Competencies cs -> { block with Competencies = cs }
+        | Number n ->
+            { block with
+                Disciplines =
+                    [ { block.Disciplines.Head with
+                          Number = n } ] }
+        | Name n ->
+            { block with
+                Disciplines = [ { block.Disciplines.Head with Name = n } ] }
+        | EnglishName n ->
+            { block with
+                Disciplines =
+                    [ { block.Disciplines.Head with
+                          EnglishName = n } ] }
+        | Realization r ->
+            { block with
+                Disciplines =
+                    [ { block.Disciplines.Head with
+                          Realization = r } ] }
+        | Trajectory t ->
+            { block with
+                Disciplines =
+                    [ { block.Disciplines.Head with
+                          Trajectory = t } ] }
+        | AssessmentForms af ->
+            { block with
+                Disciplines =
+                    [ { block.Disciplines.Head with
+                          AssessmentForms = af } ] }
+        | ClassroomWork cw ->
+            { block with
+                Disciplines =
+                    [ { block.Disciplines.Head with
+                          ClassroomWork = cw } ] }
+        | IndependentWork iw ->
+            { block with
+                Disciplines =
+                    [ { block.Disciplines.Head with
+                          IndependentWork = iw } ] }
+        | InteractiveHours ih ->
+            { block with
+                Disciplines =
+                    [ { block.Disciplines.Head with
+                          InteractiveHours = ih } ] }
 
-
+let simpleDisciplineEmpty =
+    { FgosBlockCode = Disciplines
+      Workload = 0
+      Competencies = []
+      Disciplines = [ Discipline.Empty ] }
 
 type SimpleDisciplineBuilder() =
-    member _.F = ()
+    inherit DSLBuilder<SimpleBlock, SimpleDisciplineProperty>(simpleDisciplineEmpty, SimpleDisciplineProperty.Folder)
+
+    member inline _.Yield(iw: IndependentWork) =
+        [ SimpleDisciplineProperty.IndependentWork iw ]
+
+    member inline _.Yield(cw: ClassroomWork) =
+        [ SimpleDisciplineProperty.ClassroomWork cw ]
+
+    [<CustomOperation("fgosBlockCode")>]
+    member inline this.SetFgosBlockCode(props: SimpleDisciplineProperty list, code) =
+        this.Combine(SimpleDisciplineProperty.FgosBlockCode code, props)
+
+
+    [<CustomOperation("workload")>]
+    member inline this.SetWorkload(props: SimpleDisciplineProperty list, n) =
+        this.Combine(SimpleDisciplineProperty.Workload n, props)
+
+    [<CustomOperation("competencies")>]
+    member inline this.SetCompetencies(props: SimpleDisciplineProperty list, cs) =
+        this.Combine(SimpleDisciplineProperty.Competencies cs, props)
+
+    [<CustomOperation("number")>]
+    member inline this.SetNumber(props: SimpleDisciplineProperty list, n) =
+        this.Combine(SimpleDisciplineProperty.Number n, props)
+
+    [<CustomOperation("name")>]
+    member inline this.SetName(props: SimpleDisciplineProperty list, name) =
+        this.Combine(SimpleDisciplineProperty.Name name, props)
+
+    [<CustomOperation("englishName")>]
+    member inline this.SetEnglishName(props: SimpleDisciplineProperty list, name) =
+        this.Combine(SimpleDisciplineProperty.EnglishName name, props)
+
+    [<CustomOperation("realization")>]
+    member inline this.SetRealization(props: SimpleDisciplineProperty list, realization) =
+        this.Combine(SimpleDisciplineProperty.Realization realization, props)
+
+    [<CustomOperation("trajectory")>]
+    member inline this.SetTrajectory(props: SimpleDisciplineProperty list, trajectory) =
+        this.Combine(SimpleDisciplineProperty.Trajectory trajectory, props)
+
+    [<CustomOperation("assessmentForms")>]
+    member inline this.SetAssessmentForms(props: SimpleDisciplineProperty list, forms) =
+        this.Combine(SimpleDisciplineProperty.AssessmentForms forms, props)
+
+    [<CustomOperation("interactiveHours")>]
+    member inline this.SetInteractiveHours(props: SimpleDisciplineProperty list, hours) =
+        this.Combine(SimpleDisciplineProperty.InteractiveHours hours, props)
+
+let simpleDiscipline = SimpleDisciplineBuilder()

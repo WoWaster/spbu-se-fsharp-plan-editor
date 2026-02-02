@@ -36,21 +36,16 @@ let iw =
         intermediateAssessment 2
     }
 
-let d =
-    discipline {
+let bzhd =
+    simpleDiscipline {
+        workload 3
+        competencies [ "УК-8" ]
         number 73519
         name "Безопасность жизнедеятельности"
         englishName "Life Safety"
         assessmentForms [ Credit ]
         cw
         iw
-    }
-
-let bzhd =
-    simpleBlock {
-        workload 3
-        competencies [ "УК-8" ]
-        disciplines [ d ]
     }
 
 
@@ -77,7 +72,7 @@ let up =
 
                                     tracks (
                                         [ "Технологии программирования  — \"общий профиль\"",
-                                          [ simpleBlock {
+                                          [ simpleDiscipline {
                                                 fgosBlockCode PracticalTraining
                                                 workload 3
 
@@ -92,51 +87,45 @@ let up =
                                                       "УК-1"
                                                       "УК-3" ]
 
-                                                disciplines
-                                                    [ discipline {
-                                                          number 064793
-                                                          name "Учебная практика 2 (научно-исследовательская работа)"
-                                                          englishName "Practical Training 2 (Research Project)"
-                                                          assessmentForms [ Credit ]
-                                                          classroomWork { intermediateAssessment 2 }
+                                                number 064793
+                                                name "Учебная практика 2 (научно-исследовательская работа)"
+                                                englishName "Practical Training 2 (Research Project)"
+                                                assessmentForms [ Credit ]
+                                                classroomWork { intermediateAssessment 2 }
 
-                                                          independentWork {
-                                                              inInstructorPresence 30
-                                                              usingMaterials 68
-                                                              intermediateAssessment 8
-                                                          }
+                                                independentWork {
+                                                    inInstructorPresence 30
+                                                    usingMaterials 68
+                                                    intermediateAssessment 8
+                                                }
 
-                                                          interactiveHours 8
-                                                      } ]
+                                                interactiveHours 8
                                             } ]
                                           "Технологии программирования — \"профиль ТОП ИТ\"",
-                                          [ simpleBlock {
+                                          [ simpleDiscipline {
                                                 workload 2
                                                 competencies [ "ОПК-1"; "ПКА-1" ]
+                                                number 002188
+                                                name "Теория вероятностей и математическая статистика"
+                                                englishName "Probability Theory and Mathematical Statistics"
+                                                realization "осн курс"
+                                                trajectory "тр 3 г"
+                                                assessmentForms [ Credit ]
 
-                                                disciplines
-                                                    [ discipline {
-                                                          number 002188
-                                                          name "Теория вероятностей и математическая статистика"
-                                                          englishName "Probability Theory and Mathematical Statistics"
-                                                          realization "осн курс"
-                                                          trajectory "тр 3 г"
-                                                          assessmentForms [ Credit ]
+                                                classroomWork {
+                                                    lectures 30
+                                                    practicalClasses 12
+                                                    controlWorks 2
+                                                    intermediateAssessment 2
+                                                }
 
-                                                          classroomWork {
-                                                              lectures 30
-                                                              practicalClasses 12
-                                                              controlWorks 2
-                                                              intermediateAssessment 2
-                                                          }
+                                                independentWork {
+                                                    usingMaterials 18
+                                                    intermediateAssessment 8
+                                                }
 
-                                                          independentWork {
-                                                              usingMaterials 18
-                                                              intermediateAssessment 8
-                                                          }
+                                                interactiveHours 12
 
-                                                          interactiveHours 12
-                                                      } ]
                                             } ] ]
                                         |> Map.ofList
                                     )
