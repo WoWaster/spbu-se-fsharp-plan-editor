@@ -1,6 +1,7 @@
 module PlanEditor.BySemesterDSL
 
 open BySemesterModel
+open DSLCommon
 
 type ClassroomWorkBuilder() =
     member inline _.Yield _ = ClassroomWork.Empty
@@ -91,31 +92,12 @@ type DisciplineProperty =
                 InteractiveHours = ih }
 
 type DisciplineBuilder() =
-    member inline _.Yield(()) = []
+    inherit DSLBuilder<Discipline, DisciplineProperty>(Discipline.Empty, DisciplineProperty.Folder)
 
     member inline _.Yield(iw: IndependentWork) =
         [ DisciplineProperty.IndependentWork iw ]
 
     member inline _.Yield(cw: ClassroomWork) = [ DisciplineProperty.ClassroomWork cw ]
-
-    member inline _.Delay(f: unit -> DisciplineProperty list) = f ()
-    member inline _.Delay(f: unit -> DisciplineProperty) = [ f () ]
-
-    member inline _.Combine(newProp: DisciplineProperty, props: DisciplineProperty list) = newProp :: props
-    member inline _.Combine(newProps: DisciplineProperty list, props: DisciplineProperty list) = newProps @ props
-
-
-    member inline this.For(props: DisciplineProperty list, f: unit -> DisciplineProperty list) =
-        this.Combine(props, f ())
-
-    member inline this.For(prop: DisciplineProperty, f: unit -> DisciplineProperty list) = this.Combine(prop, f ())
-
-    member inline _.For(prop: DisciplineProperty, f: unit -> DisciplineProperty) = [ prop; f () ]
-
-    member inline _.Run(props: DisciplineProperty list) =
-        props |> List.fold DisciplineProperty.Folder Discipline.Empty
-
-    member inline x.Run(prop: DisciplineProperty) = x.Run [ prop ]
 
     [<CustomOperation("number")>]
     member inline this.SetNumber(props: DisciplineProperty list, n) =
@@ -266,3 +248,10 @@ type PlanBuilder() =
     member inline _.SetSemesters(state, sems) = { state with Semesters = sems }
 
 let plan = PlanBuilder()
+
+
+
+
+
+type SimpleDisciplineBuilder() =
+    member _.F = ()

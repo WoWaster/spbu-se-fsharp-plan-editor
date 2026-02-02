@@ -1,18 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
-
-  <ItemGroup><Compile Include="BySemesterModel.fs" /><Compile Include="BySemesterDSL.fs" />
-		
-		<Compile Include="ExcelExport.fs" />
-
+  <ItemGroup>
+    <Compile Include="BySemesterModel.fs" />
+    <Compile Include="DSLCommon.fs" />
+    <Compile Include="BySemesterDSL.fs" />
+    <Compile Include="ExcelExport.fs" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.105.0" />
   </ItemGroup>
-
 </Project>
