@@ -43,16 +43,16 @@ type ClassroomWork =
       CurrentAssessment: int
       IntermediateAssessment: int }
 
-let defaultClassroomWork =
-    { Lectures = 0
-      Seminars = 0
-      Consultations = 0
-      PracticalClasses = 0
-      LaboratoryWorks = 0
-      ControlWorks = 0
-      Colloquiums = 0
-      CurrentAssessment = 0
-      IntermediateAssessment = 0 }
+    static member Empty =
+        { Lectures = 0
+          Seminars = 0
+          Consultations = 0
+          PracticalClasses = 0
+          LaboratoryWorks = 0
+          ControlWorks = 0
+          Colloquiums = 0
+          CurrentAssessment = 0
+          IntermediateAssessment = 0 }
 
 type IndependentWork =
     { UnderInstructorSupervision: int
@@ -61,12 +61,12 @@ type IndependentWork =
       CurrentAssessment: int
       IntermediateAssessment: int }
 
-let defaultIndependentWork =
-    { UnderInstructorSupervision = 0
-      InInstructorPresence = 0
-      UsingMaterials = 0
-      CurrentAssessment = 0
-      IntermediateAssessment = 0 }
+    static member Empty =
+        { UnderInstructorSupervision = 0
+          InInstructorPresence = 0
+          UsingMaterials = 0
+          CurrentAssessment = 0
+          IntermediateAssessment = 0 }
 
 // Пояснение про набор полей Name, EnglishName, Realization, Trajectory.
 // С первыми двумя казалось бы понятно, но у нас у дисциплин бывает "Реализации" и "Траектория".

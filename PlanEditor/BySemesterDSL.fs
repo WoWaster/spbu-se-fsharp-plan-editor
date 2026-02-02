@@ -3,8 +3,7 @@ module PlanEditor.BySemesterDSL
 open BySemesterModel
 
 type ClassroomWorkBuilder() =
-    member inline _.Yield _ = defaultClassroomWork
-    member inline _.Run state = state
+    member inline _.Yield _ = ClassroomWork.Empty
 
     [<CustomOperation("lectures")>]
     member inline _.SetLectures(state, n) = { state with Lectures = n }
@@ -40,8 +39,7 @@ type ClassroomWorkBuilder() =
 let classroomWork = ClassroomWorkBuilder()
 
 type IndependentWorkBuilder() =
-    member inline _.Yield _ = defaultIndependentWork
-    member inline _.Run state = state
+    member inline _.Yield _ = IndependentWork.Empty
 
     [<CustomOperation("underInstructorSupervision")>]
     member inline _.SetUnderInstructorSupervision(state, n) =
@@ -74,8 +72,8 @@ type DisciplineBuilder() =
           Realization = ""
           Trajectory = ""
           AssessmentForms = []
-          ClassroomWork = defaultClassroomWork
-          IndependentWork = defaultIndependentWork
+          ClassroomWork = ClassroomWork.Empty
+          IndependentWork = IndependentWork.Empty
           InteractiveHours = 0 }
 
     member inline _.Run state = state
