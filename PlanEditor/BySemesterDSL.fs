@@ -64,48 +64,86 @@ type IndependentWorkBuilder() =
 
 let independentWork = IndependentWorkBuilder()
 
-type DisciplineBuilder() =
-    member inline _.Yield _ =
-        { Number = 999999
-          Name = ""
-          EnglishName = ""
-          Realization = ""
-          Trajectory = ""
-          AssessmentForms = []
-          ClassroomWork = ClassroomWork.Empty
-          IndependentWork = IndependentWork.Empty
-          InteractiveHours = 0 }
+[<RequireQualifiedAccess>]
+type DisciplineProperty =
+    | Number of int
+    | Name of string
+    | EnglishName of string
+    | Realization of string
+    | Trajectory of string
+    | AssessmentForms of AssessmentForm list
+    | ClassroomWork of ClassroomWork
+    | IndependentWork of IndependentWork
+    | InteractiveHours of int
 
-    member inline _.Run state = state
+    static member Folder (discipline: Discipline) (prop: DisciplineProperty) =
+        match prop with
+        | Number n -> { discipline with Number = n }
+        | Name n -> { discipline with Name = n }
+        | EnglishName n -> { discipline with EnglishName = n }
+        | Realization r -> { discipline with Realization = r }
+        | Trajectory t -> { discipline with Trajectory = t }
+        | AssessmentForms af -> { discipline with AssessmentForms = af }
+        | ClassroomWork cw -> { discipline with ClassroomWork = cw }
+        | IndependentWork iw -> { discipline with IndependentWork = iw }
+        | InteractiveHours ih ->
+            { discipline with
+                InteractiveHours = ih }
+
+type DisciplineBuilder() =
+    member inline _.Yield(()) = []
+
+    member inline _.Yield(iw: IndependentWork) =
+        [ DisciplineProperty.IndependentWork iw ]
+
+    member inline _.Yield(cw: ClassroomWork) = [ DisciplineProperty.ClassroomWork cw ]
+
+    member inline _.Delay(f: unit -> DisciplineProperty list) = f ()
+    member inline _.Delay(f: unit -> DisciplineProperty) = [ f () ]
+
+    member inline _.Combine(newProp: DisciplineProperty, props: DisciplineProperty list) = newProp :: props
+    member inline _.Combine(newProps: DisciplineProperty list, props: DisciplineProperty list) = newProps @ props
+
+
+    member inline this.For(props: DisciplineProperty list, f: unit -> DisciplineProperty list) =
+        this.Combine(props, f ())
+
+    member inline this.For(prop: DisciplineProperty, f: unit -> DisciplineProperty list) = this.Combine(prop, f ())
+
+    member inline _.For(prop: DisciplineProperty, f: unit -> DisciplineProperty) = [ prop; f () ]
+
+    member inline _.Run(props: DisciplineProperty list) =
+        props |> List.fold DisciplineProperty.Folder Discipline.Empty
+
+    member inline x.Run(prop: DisciplineProperty) = x.Run [ prop ]
 
     [<CustomOperation("number")>]
-    member inline _.SetNumber(state, n) = { state with Discipline.Number = n }
+    member inline this.SetNumber(props: DisciplineProperty list, n) =
+        this.Combine(DisciplineProperty.Number n, props)
 
     [<CustomOperation("name")>]
-    member inline _.SetName(state, s) = { state with Discipline.Name = s }
+    member inline this.SetName(props: DisciplineProperty list, name) =
+        this.Combine(DisciplineProperty.Name name, props)
 
     [<CustomOperation("englishName")>]
-    member inline _.SetEnglishName(state, s) =
-        { state with
-            Discipline.EnglishName = s }
+    member inline this.SetEnglishName(props: DisciplineProperty list, name) =
+        this.Combine(DisciplineProperty.EnglishName name, props)
 
     [<CustomOperation("realization")>]
-    member inline _.SetRealization(state, s) = { state with Realization = s }
+    member inline this.SetRealization(props: DisciplineProperty list, realization) =
+        this.Combine(DisciplineProperty.Realization realization, props)
 
     [<CustomOperation("trajectory")>]
-    member inline _.SetTrajectory(state, s) = { state with Trajectory = s }
+    member inline this.SetTrajectory(props: DisciplineProperty list, trajectory) =
+        this.Combine(DisciplineProperty.Trajectory trajectory, props)
 
     [<CustomOperation("assessmentForms")>]
-    member inline _.SetAssessmentForms(state, forms) = { state with AssessmentForms = forms }
-
-    [<CustomOperation("classroomWork")>]
-    member inline _.SetClassroomWork(state, work) = { state with ClassroomWork = work }
-
-    [<CustomOperation("independentWork")>]
-    member inline _.SetIndependentWork(state, work) = { state with IndependentWork = work }
+    member inline this.SetAssessmentForms(props: DisciplineProperty list, forms) =
+        this.Combine(DisciplineProperty.AssessmentForms forms, props)
 
     [<CustomOperation("interactiveHours")>]
-    member inline _.SetInteractiveHours(state, n) = { state with InteractiveHours = n }
+    member inline this.SetInteractiveHours(props: DisciplineProperty list, hours) =
+        this.Combine(DisciplineProperty.InteractiveHours hours, props)
 
 let discipline = DisciplineBuilder()
 

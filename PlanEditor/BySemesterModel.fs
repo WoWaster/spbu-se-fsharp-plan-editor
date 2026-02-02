@@ -88,6 +88,17 @@ type Discipline =
       IndependentWork: IndependentWork
       InteractiveHours: int }
 
+    static member Empty =
+        { Number = 0
+          Name = ""
+          EnglishName = ""
+          Realization = ""
+          Trajectory = ""
+          AssessmentForms = []
+          ClassroomWork = ClassroomWork.Empty
+          IndependentWork = IndependentWork.Empty
+          InteractiveHours = 0 }
+
 type SimpleBlock =
     { FgosBlockCode: FgosBlockCode
       Workload: int

@@ -42,8 +42,8 @@ let d =
         name "Безопасность жизнедеятельности"
         englishName "Life Safety"
         assessmentForms [ Credit ]
-        classroomWork cw
-        independentWork iw
+        cw
+        iw
     }
 
 let bzhd =
@@ -98,19 +98,13 @@ let up =
                                                           name "Учебная практика 2 (научно-исследовательская работа)"
                                                           englishName "Practical Training 2 (Research Project)"
                                                           assessmentForms [ Credit ]
+                                                          classroomWork { intermediateAssessment 2 }
 
-                                                          classroomWork (
-                                                              // TODO: Fix name clash
-                                                              ClassroomWorkBuilder() { intermediateAssessment 2 }
-                                                          )
-
-                                                          independentWork (
-                                                              IndependentWorkBuilder() {
-                                                                  inInstructorPresence 30
-                                                                  usingMaterials 68
-                                                                  intermediateAssessment 8
-                                                              }
-                                                          )
+                                                          independentWork {
+                                                              inInstructorPresence 30
+                                                              usingMaterials 68
+                                                              intermediateAssessment 8
+                                                          }
 
                                                           interactiveHours 8
                                                       } ]
@@ -129,22 +123,17 @@ let up =
                                                           trajectory "тр 3 г"
                                                           assessmentForms [ Credit ]
 
-                                                          classroomWork (
-                                                              // TODO: Fix name clash
-                                                              ClassroomWorkBuilder() {
-                                                                  lectures 30
-                                                                  practicalClasses 12
-                                                                  controlWorks 2
-                                                                  intermediateAssessment 2
-                                                              }
-                                                          )
+                                                          classroomWork {
+                                                              lectures 30
+                                                              practicalClasses 12
+                                                              controlWorks 2
+                                                              intermediateAssessment 2
+                                                          }
 
-                                                          independentWork (
-                                                              IndependentWorkBuilder() {
-                                                                  usingMaterials 18
-                                                                  intermediateAssessment 8
-                                                              }
-                                                          )
+                                                          independentWork {
+                                                              usingMaterials 18
+                                                              intermediateAssessment 8
+                                                          }
 
                                                           interactiveHours 12
                                                       } ]
