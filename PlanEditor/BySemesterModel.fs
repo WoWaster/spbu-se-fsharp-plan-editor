@@ -125,16 +125,45 @@ type Blocks =
         { SimpleBlocks = []
           ComplexBlocks = [] }
 
+// Currently may have been avoid, but for simplicity of DSL
+// this seemed to be most simple solution
+type BasicPart =
+    | BasicPart of Blocks
+
+    static member Empty = BasicPart Blocks.Empty
+
+    member this.SimpleBlocks =
+        match this with
+        | BasicPart bp -> bp.SimpleBlocks
+
+    member this.ComplexBlocks =
+        match this with
+        | BasicPart bp -> bp.ComplexBlocks
+
+type VariablePart =
+    | VariablePart of Blocks
+
+    static member Empty = VariablePart Blocks.Empty
+
+    member this.SimpleBlocks =
+        match this with
+        | VariablePart vp -> vp.SimpleBlocks
+
+    member this.ComplexBlocks =
+        match this with
+        | VariablePart vp -> vp.ComplexBlocks
+
+
 // TODO: Факультативы
 type Semester =
     { Number: int
-      BasicPart: Blocks
-      VariablePart: Blocks }
+      BasicPart: BasicPart
+      VariablePart: VariablePart }
 
     static member Empty =
         { Number = 0
-          BasicPart = Blocks.Empty
-          VariablePart = Blocks.Empty }
+          BasicPart = BasicPart.Empty
+          VariablePart = VariablePart.Empty }
 
 // TODO: Специалитет?
 type StudyLevel =
