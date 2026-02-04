@@ -110,7 +110,18 @@ let setupDisciplinesHeader (ws: IXLWorksheet) =
 
 let exportDiscipline (ws: IXLWorksheet) row (discipline: Discipline) =
     let fullName =
-        $"[%06d{discipline.Number}] %s{discipline.Name}\n%s{discipline.EnglishName}"
+        [ $"[%06d{discipline.Number}] "
+          discipline.Name
+          if System.String.IsNullOrEmpty discipline.Realization then
+              ""
+          else
+              $" (%s{discipline.Realization})"
+          if System.String.IsNullOrEmpty discipline.Trajectory then
+              ""
+          else
+              $", %s{discipline.Trajectory}"
+          $"\n%s{discipline.EnglishName}" ]
+        |> String.concat ""
 
     let assessmentFormsStr =
         discipline.AssessmentForms |> distinctSortMapCommaConcat assessmentFormToString
