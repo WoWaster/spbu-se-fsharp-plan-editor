@@ -61,75 +61,130 @@ let up =
             [ semester {
                   number 5
 
-                  basicBlocks (
-                      blocks {
-                          simpleBlocks [ bzhd ]
+                  basicPart {
+                      bzhd
 
-                          complexBlocks
-                              [ complexBlock {
-                                    name ":"
+                      complexBlock {
+                          name ":"
 
-                                    tracks (
-                                        [ "Технологии программирования  — \"общий профиль\"",
-                                          [ simpleDiscipline {
-                                                fgosBlockCode fgosCodePracticalTraining
-                                                workload 3
+                          track
+                              "Технологии программирования  — \"общий профиль\""
+                              [ simpleDiscipline {
+                                    fgosBlockCode fgosCodePracticalTraining
+                                    workload 3
 
-                                                competencies
-                                                    [ "ОПК-1"
-                                                      "ОПК-2"
-                                                      "ОПК-3"
-                                                      "ОПК-4"
-                                                      "ПКА-1"
-                                                      "ПКП-10-А-ПК-1"
-                                                      "ПКП-13-А-ПК-4"
-                                                      "УК-1"
-                                                      "УК-3" ]
+                                    competencies
+                                        [ "ОПК-1"
+                                          "ОПК-2"
+                                          "ОПК-3"
+                                          "ОПК-4"
+                                          "ПКА-1"
+                                          "ПКП-10-А-ПК-1"
+                                          "ПКП-13-А-ПК-4"
+                                          "УК-1"
+                                          "УК-3" ]
 
-                                                number 064793
-                                                name "Учебная практика 2 (научно-исследовательская работа)"
-                                                englishName "Practical Training 2 (Research Project)"
-                                                assessmentForms [ credit ]
-                                                classroomWork { intermediateAssessment 2 }
+                                    number 064793
+                                    name "Учебная практика 2 (научно-исследовательская работа)"
+                                    englishName "Practical Training 2 (Research Project)"
+                                    assessmentForms [ credit ]
+                                    classroomWork { intermediateAssessment 2 }
 
-                                                independentWork {
-                                                    inInstructorPresence 30
-                                                    usingMaterials 68
-                                                    intermediateAssessment 8
-                                                }
+                                    independentWork {
+                                        inInstructorPresence 30
+                                        usingMaterials 68
+                                        intermediateAssessment 8
+                                    }
 
-                                                interactiveHours 8
-                                            } ]
-                                          "Технологии программирования — \"профиль ТОП ИТ\"",
-                                          [ simpleDiscipline {
-                                                workload 2
-                                                competencies [ "ОПК-1"; "ПКА-1" ]
-                                                number 002188
-                                                name "Теория вероятностей и математическая статистика"
-                                                englishName "Probability Theory and Mathematical Statistics"
-                                                realization "осн курс"
-                                                trajectory "тр 3 г"
-                                                assessmentForms [ credit ]
+                                    interactiveHours 8
+                                } ]
 
-                                                classroomWork {
-                                                    lectures 30
-                                                    practicalClasses 12
-                                                    controlWorks 2
-                                                    intermediateAssessment 2
-                                                }
+                          track
+                              "Технологии программирования — \"профиль ТОП ИТ\""
+                              [ simpleDiscipline {
+                                    workload 2
+                                    competencies [ "ОПК-1"; "ПКА-1" ]
+                                    number 002188
+                                    name "Теория вероятностей и математическая статистика"
+                                    englishName "Probability Theory and Mathematical Statistics"
+                                    realization "осн курс"
+                                    trajectory "тр 3 г"
+                                    assessmentForms [ credit ]
 
-                                                independentWork {
-                                                    usingMaterials 18
-                                                    intermediateAssessment 8
-                                                }
+                                    classroomWork {
+                                        lectures 30
+                                        practicalClasses 12
+                                        controlWorks 2
+                                        intermediateAssessment 2
+                                    }
 
-                                                interactiveHours 12
-                                            } ] ]
-                                        |> Map.ofList
-                                    )
+                                    independentWork {
+                                        usingMaterials 18
+                                        intermediateAssessment 8
+                                    }
+
+                                    interactiveHours 12
+                                }
+
+                                ]
+                      }
+                  }
+              }
+              semester {
+                  number 8
+
+                  variablePart {
+                      complexBlock {
+                          name ":"
+
+                          track
+                              "Технологии программирования — \"профиль ТОП ИТ\""
+                              [ electiveBlock {
+                                    workload 2
+                                    competencies [ "ПКП-1-ИП-ПК-1" ]
+
+                                    disciplines
+                                        [ disciplineInBlock {
+                                              number 81474
+                                              name "Программирование на F#"
+                                              englishName "F# Programming"
+                                              assessmentForms [ credit ]
+
+                                              classroomWork {
+                                                  practicalClasses 20
+                                                  intermediateAssessment 2
+                                              }
+
+                                              independentWork {
+                                                  usingMaterials 42
+                                                  intermediateAssessment 8
+                                              }
+
+                                              interactiveHours 20
+                                          }
+                                          disciplineInBlock {
+                                              number 2299
+                                              name "Функциональное программирование"
+                                              englishName "Functional Programming"
+                                              realization "осн курс"
+                                              trajectory "тр 8 сем"
+                                              assessmentForms [ credit ]
+
+                                              classroomWork {
+                                                  seminars 20
+                                                  intermediateAssessment 2
+                                              }
+
+                                              independentWork {
+                                                  usingMaterials 42
+                                                  intermediateAssessment 8
+                                              }
+
+                                              interactiveHours 4
+                                          } ]
                                 } ]
                       }
-                  )
+                  }
               } ]
     }
 

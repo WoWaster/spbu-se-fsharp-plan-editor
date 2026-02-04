@@ -63,10 +63,9 @@ type IndependentWorkBuilder() =
         { state with
             IndependentWork.IntermediateAssessment = n }
 
-// Discipline
-// TODO: Is required?
+// Discipline in Elective Block
 [<RequireQualifiedAccess>]
-type DisciplineProperty =
+type DisciplineInBlockProperty =
     | Number of int
     | Name of string
     | EnglishName of string
@@ -77,7 +76,7 @@ type DisciplineProperty =
     | IndependentWork of IndependentWork
     | InteractiveHours of int
 
-    static member Folder (discipline: Discipline) (prop: DisciplineProperty) =
+    static member Folder (discipline: Discipline) (prop: DisciplineInBlockProperty) =
         match prop with
         | Number n -> { discipline with Number = n }
         | Name n -> { discipline with Name = n }
@@ -91,45 +90,45 @@ type DisciplineProperty =
             { discipline with
                 InteractiveHours = ih }
 
-type DisciplineBuilder() =
-    inherit DSLBuilder<Discipline, DisciplineProperty>(Discipline.Empty, DisciplineProperty.Folder)
+type DisciplineInBlockBuilder() =
+    inherit DSLBuilder<Discipline, DisciplineInBlockProperty>(Discipline.Empty, DisciplineInBlockProperty.Folder)
 
     member inline _.Yield(iw: IndependentWork) =
-        [ DisciplineProperty.IndependentWork iw ]
+        [ DisciplineInBlockProperty.IndependentWork iw ]
 
-    member inline _.Yield(cw: ClassroomWork) = [ DisciplineProperty.ClassroomWork cw ]
+    member inline _.Yield(cw: ClassroomWork) =
+        [ DisciplineInBlockProperty.ClassroomWork cw ]
 
     [<CustomOperation("number")>]
-    member inline this.SetNumber(props: DisciplineProperty list, n) =
-        this.Combine(DisciplineProperty.Number n, props)
+    member inline this.SetNumber(props: DisciplineInBlockProperty list, n) =
+        this.Combine(DisciplineInBlockProperty.Number n, props)
 
     [<CustomOperation("name")>]
-    member inline this.SetName(props: DisciplineProperty list, name) =
-        this.Combine(DisciplineProperty.Name name, props)
+    member inline this.SetName(props: DisciplineInBlockProperty list, name) =
+        this.Combine(DisciplineInBlockProperty.Name name, props)
 
     [<CustomOperation("englishName")>]
-    member inline this.SetEnglishName(props: DisciplineProperty list, name) =
-        this.Combine(DisciplineProperty.EnglishName name, props)
+    member inline this.SetEnglishName(props: DisciplineInBlockProperty list, name) =
+        this.Combine(DisciplineInBlockProperty.EnglishName name, props)
 
     [<CustomOperation("realization")>]
-    member inline this.SetRealization(props: DisciplineProperty list, realization) =
-        this.Combine(DisciplineProperty.Realization realization, props)
+    member inline this.SetRealization(props: DisciplineInBlockProperty list, realization) =
+        this.Combine(DisciplineInBlockProperty.Realization realization, props)
 
     [<CustomOperation("trajectory")>]
-    member inline this.SetTrajectory(props: DisciplineProperty list, trajectory) =
-        this.Combine(DisciplineProperty.Trajectory trajectory, props)
+    member inline this.SetTrajectory(props: DisciplineInBlockProperty list, trajectory) =
+        this.Combine(DisciplineInBlockProperty.Trajectory trajectory, props)
 
     [<CustomOperation("assessmentForms")>]
-    member inline this.SetAssessmentForms(props: DisciplineProperty list, forms) =
-        this.Combine(DisciplineProperty.AssessmentForms forms, props)
+    member inline this.SetAssessmentForms(props: DisciplineInBlockProperty list, forms) =
+        this.Combine(DisciplineInBlockProperty.AssessmentForms forms, props)
 
     [<CustomOperation("interactiveHours")>]
-    member inline this.SetInteractiveHours(props: DisciplineProperty list, hours) =
-        this.Combine(DisciplineProperty.InteractiveHours hours, props)
+    member inline this.SetInteractiveHours(props: DisciplineInBlockProperty list, hours) =
+        this.Combine(DisciplineInBlockProperty.InteractiveHours hours, props)
 
-// Simple Block
-// TODO: Is required?
-type SimpleBlockBuilder() =
+// Elective Block
+type ElectiveBlockBuilder() =
     member inline _.Yield _ = SimpleBlock.Empty
 
     member inline _.Run state = state
@@ -148,45 +147,77 @@ type SimpleBlockBuilder() =
     [<CustomOperation("disciplines")>]
     member inline _.SetDisciplines(state, discs) = { state with Disciplines = discs }
 
-// Complex Block
-// TODO: Is required?
-type ComplexBlockBuilder() =
-    member _.Yield _ = ComplexBlock.Empty
-    member inline _.Run state = state
+// Basic Part
+[<RequireQualifiedAccess>]
+type BasicPartProperty =
+    | SimpleBlock of SimpleBlock
+    | ComplexBlock of ComplexBlock
 
-    [<CustomOperation("name")>]
-    member inline _.SetName(state, s) = { state with ComplexBlock.Name = s }
+    static member Folder (bp: BasicPart) (prop: BasicPartProperty) =
+        let part = bp.Value
 
-    [<CustomOperation("tracks")>]
-    member inline _.SetTracks(state, tracks) = { state with Tracks = tracks }
+        (match prop with
+         | SimpleBlock sb ->
+             { part with
+                 SimpleBlocks = sb :: part.SimpleBlocks }
+         | ComplexBlock cb ->
+             { part with
+                 ComplexBlocks = cb :: part.ComplexBlocks })
+        |> BasicPart
 
-// Blocks
-// TODO: Is required?
-type BlocksBuilder() =
-    member _.Yield _ = Blocks.Empty
+type BasicPartBuilder() =
+    inherit DSLBuilder<BasicPart, BasicPartProperty>(BasicPart.Empty, BasicPartProperty.Folder)
+    member inline _.Yield(sb: SimpleBlock) = [ BasicPartProperty.SimpleBlock sb ]
+    member inline _.Yield(cb: ComplexBlock) = [ BasicPartProperty.ComplexBlock cb ]
 
-    member inline _.Run state = state
+// Variable Part
+[<RequireQualifiedAccess>]
+type VariablePartProperty =
+    | SimpleBlock of SimpleBlock
+    | ComplexBlock of ComplexBlock
 
-    [<CustomOperation("simpleBlocks")>]
-    member inline _.SetSimpleBlocks(state, blocks) = { state with SimpleBlocks = blocks }
+    static member Folder (vp: VariablePart) (prop: VariablePartProperty) =
+        let part = vp.Value
 
-    [<CustomOperation("complexBlocks")>]
-    member inline _.SetComplexBlocks(state, blocks) = { state with ComplexBlocks = blocks }
+        (match prop with
+         | SimpleBlock sb ->
+             { part with
+                 SimpleBlocks = sb :: part.SimpleBlocks }
+         | ComplexBlock cb ->
+             { part with
+                 ComplexBlocks = cb :: part.ComplexBlocks })
+        |> VariablePart
+
+type VariablePartBuilder() =
+    inherit DSLBuilder<VariablePart, VariablePartProperty>(VariablePart.Empty, VariablePartProperty.Folder)
+    member inline _.Yield(sb: SimpleBlock) = [ VariablePartProperty.SimpleBlock sb ]
+
+    member inline _.Yield(cb: ComplexBlock) =
+        [ VariablePartProperty.ComplexBlock cb ]
 
 // Semester
-type SemesterBuilder() =
-    member _.Yield _ = Semester.Empty
+[<RequireQualifiedAccess>]
+type SemesterProperty =
+    | Number of int
+    | BasicPart of BasicPart
+    | VariablePart of VariablePart
 
-    member inline _.Run state = state
+    static member Folder (semester: Semester) (prop: SemesterProperty) =
+        match prop with
+        | Number n -> { semester with Number = n }
+        // TODO: think about appending
+        | BasicPart bp -> { semester with BasicPart = bp }
+        | VariablePart vp -> { semester with VariablePart = vp }
+
+type SemesterBuilder() =
+    inherit DSLBuilder<Semester, SemesterProperty>(Semester.Empty, SemesterProperty.Folder)
+
+    member inline _.Yield(bp: BasicPart) = [ SemesterProperty.BasicPart bp ]
+    member inline _.Yield(vp: VariablePart) = [ SemesterProperty.VariablePart vp ]
 
     [<CustomOperation("number")>]
-    member inline _.SetNumber(state, n) = { state with Semester.Number = n }
-
-    [<CustomOperation("basicBlocks")>]
-    member inline _.SetBasicBlocks(state, blocks) = { state with BasicPart = blocks }
-
-    [<CustomOperation("electiveBlocks")>]
-    member inline _.SetElectiveBlocks(state, blocks) = { state with VariablePart = blocks }
+    member inline this.SetNumber(props, n) =
+        this.Combine(SemesterProperty.Number n, props)
 
 // Plan
 type PlanBuilder() =
@@ -340,3 +371,27 @@ type SimpleDisciplineBuilder() =
     [<CustomOperation("interactiveHours")>]
     member inline this.SetInteractiveHours(props: SimpleDisciplineProperty list, hours) =
         this.Combine(SimpleDisciplineProperty.InteractiveHours hours, props)
+
+[<RequireQualifiedAccess>]
+type ComplexBlockProperty =
+    | Name of string
+    | Track of string * SimpleBlock list
+
+    static member Folder (cb: ComplexBlock) (prop: ComplexBlockProperty) =
+        match prop with
+        | Name n -> { cb with Name = n }
+        | Track(name, blocks) ->
+            { cb with
+                Tracks = cb.Tracks |> Map.add name blocks }
+
+
+type ComplexBlockBuilder() =
+    inherit DSLBuilder<ComplexBlock, ComplexBlockProperty>(ComplexBlock.Empty, ComplexBlockProperty.Folder)
+
+    [<CustomOperation("name")>]
+    member inline this.SetName(props: ComplexBlockProperty list, name) =
+        this.Combine(ComplexBlockProperty.Name name, props)
+
+    [<CustomOperation("track")>]
+    member inline this.SetTrack(props: ComplexBlockProperty list, name, blocks) =
+        this.Combine(ComplexBlockProperty.Track(name, blocks), props)

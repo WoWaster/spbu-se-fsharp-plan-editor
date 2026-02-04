@@ -140,6 +140,8 @@ type BasicPart =
         match this with
         | BasicPart bp -> bp.ComplexBlocks
 
+    member this.Value = let (BasicPart p) = this in p
+
 type VariablePart =
     | VariablePart of Blocks
 
@@ -152,6 +154,8 @@ type VariablePart =
     member this.ComplexBlocks =
         match this with
         | VariablePart vp -> vp.ComplexBlocks
+
+    member this.Value = let (VariablePart p) = this in p
 
 
 // TODO: Факультативы
