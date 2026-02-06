@@ -7,6 +7,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PlanEditor", "PlanEditor\By
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PlanEditorCLI", "PlanEditorCLI\PlanEditorCLI.fsproj", "{02B5E4E1-820F-4889-A982-3FC8824C7557}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PlanEditorCLI", "PlanEditorCLI\PlanEditorCLI.fsproj", "{02B5E4E1-820F-4889-A982-3FC8824C7557}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
