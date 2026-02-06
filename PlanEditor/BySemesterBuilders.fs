@@ -4,64 +4,126 @@ open BySemesterModel
 open DSLCommon
 
 // Classroom Work
+[<RequireQualifiedAccess>]
+type ClassroomWorkProperty =
+    | Lectures of int
+    | Seminars of int
+    | Consultations of int
+    | PracticalClasses of int
+    | LaboratoryWorks of int
+    | ControlWorks of int
+    | Colloquiums of int
+    | CurrentAssessment of int
+    | IntermediateAssessment of int
+
+    static member Folder (classroomWork: ClassroomWork) (prop: ClassroomWorkProperty) =
+        match prop with
+        | Lectures n -> { classroomWork with Lectures = n }
+        | Seminars n -> { classroomWork with Seminars = n }
+        | Consultations n -> { classroomWork with Consultations = n }
+        | PracticalClasses n ->
+            { classroomWork with
+                PracticalClasses = n }
+        | LaboratoryWorks n ->
+            { classroomWork with
+                LaboratoryWorks = n }
+        | ControlWorks n -> { classroomWork with ControlWorks = n }
+        | Colloquiums n -> { classroomWork with Colloquiums = n }
+        | CurrentAssessment n ->
+            { classroomWork with
+                CurrentAssessment = n }
+        | IntermediateAssessment n ->
+            { classroomWork with
+                IntermediateAssessment = n }
+
 type ClassroomWorkBuilder() =
-    member inline _.Yield _ = ClassroomWork.Empty
+    inherit DSLBuilder<ClassroomWork, ClassroomWorkProperty>(ClassroomWork.Empty, ClassroomWorkProperty.Folder)
 
     [<CustomOperation("lectures")>]
-    member inline _.SetLectures(state, n) = { state with Lectures = n }
+    member inline this.SetLectures(props, n) =
+        this.Combine(ClassroomWorkProperty.Lectures n, props)
 
     [<CustomOperation("seminars")>]
-    member inline _.SetSeminars(state, n) = { state with Seminars = n }
+    member inline this.SetSeminars(props, n) =
+        this.Combine(ClassroomWorkProperty.Seminars n, props)
 
     [<CustomOperation("consultations")>]
-    member inline _.SetConsultations(state, n) = { state with Consultations = n }
+    member inline this.SetConsultations(props, n) =
+        this.Combine(ClassroomWorkProperty.Consultations n, props)
 
     [<CustomOperation("practicalClasses")>]
-    member inline _.SetPracticalClasses(state, n) = { state with PracticalClasses = n }
+    member inline this.SetPracticalClasses(props, n) =
+        this.Combine(ClassroomWorkProperty.PracticalClasses n, props)
 
     [<CustomOperation("laboratoryWorks")>]
-    member inline _.SetLaboratoryWorks(state, n) = { state with LaboratoryWorks = n }
+    member inline this.SetLaboratoryWorks(props, n) =
+        this.Combine(ClassroomWorkProperty.LaboratoryWorks n, props)
 
     [<CustomOperation("controlWorks")>]
-    member inline _.SetControlWorks(state, n) = { state with ControlWorks = n }
+    member inline this.SetControlWorks(props, n) =
+        this.Combine(ClassroomWorkProperty.ControlWorks n, props)
 
     [<CustomOperation("colloquiums")>]
-    member inline _.SetColloquiums(state, n) = { state with Colloquiums = n }
+    member inline this.SetColloquiums(props, n) =
+        this.Combine(ClassroomWorkProperty.Colloquiums n, props)
 
     [<CustomOperation("currentAssessment")>]
-    member inline _.SetCurrentAssessment(state, n) =
-        { state with
-            ClassroomWork.CurrentAssessment = n }
+    member inline this.SetCurrentAssessment(props, n) =
+        this.Combine(ClassroomWorkProperty.CurrentAssessment n, props)
 
     [<CustomOperation("intermediateAssessment")>]
-    member inline _.SetIntermediateAssessment(state, n) =
-        { state with
-            ClassroomWork.IntermediateAssessment = n }
+    member inline this.SetIntermediateAssessment(props, n) =
+        this.Combine(ClassroomWorkProperty.IntermediateAssessment n, props)
 
 // Independent Work
+[<RequireQualifiedAccess>]
+type IndependentWorkProperty =
+    | UnderInstructorSupervision of int
+    | InInstructorPresence of int
+    | UsingMaterials of int
+    | CurrentAssessment of int
+    | IntermediateAssessment of int
+
+    static member Folder (independentWork: IndependentWork) (prop: IndependentWorkProperty) =
+        match prop with
+        | UnderInstructorSupervision n ->
+            { independentWork with
+                UnderInstructorSupervision = n }
+        | InInstructorPresence n ->
+            { independentWork with
+                InInstructorPresence = n }
+        | UsingMaterials n ->
+            { independentWork with
+                UsingMaterials = n }
+        | CurrentAssessment n ->
+            { independentWork with
+                CurrentAssessment = n }
+        | IntermediateAssessment n ->
+            { independentWork with
+                IntermediateAssessment = n }
+
 type IndependentWorkBuilder() =
-    member inline _.Yield _ = IndependentWork.Empty
+    inherit DSLBuilder<IndependentWork, IndependentWorkProperty>(IndependentWork.Empty, IndependentWorkProperty.Folder)
 
     [<CustomOperation("underInstructorSupervision")>]
-    member inline _.SetUnderInstructorSupervision(state, n) =
-        { state with
-            UnderInstructorSupervision = n }
+    member inline this.SetUnderInstructorSupervision(props, n) =
+        this.Combine(IndependentWorkProperty.UnderInstructorSupervision n, props)
 
     [<CustomOperation("inInstructorPresence")>]
-    member inline _.SetInInstructorPresence(state, n) = { state with InInstructorPresence = n }
+    member inline this.SetInInstructorPresence(props, n) =
+        this.Combine(IndependentWorkProperty.InInstructorPresence n, props)
 
     [<CustomOperation("usingMaterials")>]
-    member inline _.SetUsingMaterials(state, n) = { state with UsingMaterials = n }
+    member inline this.SetUsingMaterials(props, n) =
+        this.Combine(IndependentWorkProperty.UsingMaterials n, props)
 
     [<CustomOperation("currentAssessment")>]
-    member inline _.SetCurrentAssessment(state, n) =
-        { state with
-            IndependentWork.CurrentAssessment = n }
+    member inline this.SetCurrentAssessment(props, n) =
+        this.Combine(IndependentWorkProperty.CurrentAssessment n, props)
 
     [<CustomOperation("intermediateAssessment")>]
-    member inline _.SetIntermediateAssessment(state, n) =
-        { state with
-            IndependentWork.IntermediateAssessment = n }
+    member inline this.SetIntermediateAssessment(props, n) =
+        this.Combine(IndependentWorkProperty.IntermediateAssessment n, props)
 
 // Discipline in Elective Block
 [<RequireQualifiedAccess>]
@@ -128,24 +190,44 @@ type DisciplineInBlockBuilder() =
         this.Combine(DisciplineInBlockProperty.InteractiveHours hours, props)
 
 // Elective Block
-type ElectiveBlockBuilder() =
-    member inline _.Yield _ = SimpleBlock.Empty
+[<RequireQualifiedAccess>]
+type ElectiveBlockProperty =
+    | FgosBlockCode of FgosBlockCode
+    | Workload of int
+    | Competencies of string list
+    | Disciplines of Discipline list
 
-    member inline _.Run state = state
+    static member Folder (simpleBlock: SimpleBlock) (prop: ElectiveBlockProperty) =
+        match prop with
+        | FgosBlockCode code ->
+            { simpleBlock with
+                FgosBlockCode = code }
+        | Workload n -> { simpleBlock with Workload = n }
+        | Competencies comps ->
+            { simpleBlock with
+                Competencies = comps }
+        | Disciplines disciplines ->
+            { simpleBlock with
+                Disciplines = disciplines }
+
+type ElectiveBlockBuilder() =
+    inherit DSLBuilder<SimpleBlock, ElectiveBlockProperty>(SimpleBlock.Empty, ElectiveBlockProperty.Folder)
 
     [<CustomOperation("fgosBlockCode")>]
-    member inline _.SetFgosBlockCode(state, code) = { state with FgosBlockCode = code }
+    member inline this.SetFgosBlockCode(props, code) =
+        this.Combine(ElectiveBlockProperty.FgosBlockCode code, props)
 
     [<CustomOperation("workload")>]
-    member inline _.SetWorkload(state, n) = { state with Workload = n }
+    member inline this.SetWorkload(props, n) =
+        this.Combine(ElectiveBlockProperty.Workload n, props)
 
     [<CustomOperation("competencies")>]
-    member inline _.SetCompetencies(state, comps) =
-        { state with
-            SimpleBlock.Competencies = comps }
+    member inline this.SetCompetencies(props, comps) =
+        this.Combine(ElectiveBlockProperty.Competencies comps, props)
 
     [<CustomOperation("disciplines")>]
-    member inline _.SetDisciplines(state, discs) = { state with Disciplines = discs }
+    member inline this.SetDisciplines(props, disciplines) =
+        this.Combine(ElectiveBlockProperty.Disciplines disciplines, props)
 
 // Basic Part
 [<RequireQualifiedAccess>]
@@ -220,38 +302,70 @@ type SemesterBuilder() =
         this.Combine(SemesterProperty.Number n, props)
 
 // Plan
+[<RequireQualifiedAccess>]
+type PlanProperty =
+    | Name of string
+    | EnglishName of string
+    | StudyLevel of StudyLevel
+    | Specialty of string
+    | LanguagesOfInstruction of LanguageOfInstruction list
+    | YearOfAdmission of int
+    | Code of int
+    | Competencies of Map<string, string>
+    | Semesters of Semester list
+
+    static member Folder (plan: Plan) (prop: PlanProperty) =
+        match prop with
+        | Name name -> { plan with Name = name }
+        | EnglishName name -> { plan with EnglishName = name }
+        | StudyLevel level -> { plan with StudyLevel = level }
+        | Specialty specialty -> { plan with Specialty = specialty }
+        | LanguagesOfInstruction langs ->
+            { plan with
+                LanguagesOfInstruction = langs }
+        | YearOfAdmission year -> { plan with YearOfAdmission = year }
+        | Code code -> { plan with Code = code }
+        | Competencies comps -> { plan with Competencies = comps }
+        | Semesters semesters -> { plan with Semesters = semesters }
+
 type PlanBuilder() =
-    member _.Yield(_) = Plan.Empty
+    inherit DSLBuilder<Plan, PlanProperty>(Plan.Empty, PlanProperty.Folder)
 
     [<CustomOperation("name")>]
-    member inline _.SetName(state, s) = { state with Plan.Name = s }
+    member inline this.SetName(props, name) =
+        this.Combine(PlanProperty.Name name, props)
 
     [<CustomOperation("englishName")>]
-    member inline _.SetEnglishName(state, s) = { state with Plan.EnglishName = s }
+    member inline this.SetEnglishName(props, name) =
+        this.Combine(PlanProperty.EnglishName name, props)
 
     [<CustomOperation("studyLevel")>]
-    member inline _.SetStudyLevel(state, level) = { state with StudyLevel = level }
+    member inline this.SetStudyLevel(props, level) =
+        this.Combine(PlanProperty.StudyLevel level, props)
 
     [<CustomOperation("specialty")>]
-    member inline _.SetSpecialty(state, s) = { state with Specialty = s }
+    member inline this.SetSpecialty(props, specialty) =
+        this.Combine(PlanProperty.Specialty specialty, props)
 
     [<CustomOperation("languagesOfInstruction")>]
-    member inline _.SetLanguagesOfInstruction(state, langs) =
-        { state with
-            LanguagesOfInstruction = langs }
+    member inline this.SetLanguagesOfInstruction(props, langs) =
+        this.Combine(PlanProperty.LanguagesOfInstruction langs, props)
 
     [<CustomOperation("yearOfAdmission")>]
-    member inline _.SetYearOfAdmission(state, year) = { state with YearOfAdmission = year }
+    member inline this.SetYearOfAdmission(props, year) =
+        this.Combine(PlanProperty.YearOfAdmission year, props)
 
     [<CustomOperation("code")>]
-    member inline _.SetCode(state, n) = { state with Code = n }
+    member inline this.SetCode(props, code) =
+        this.Combine(PlanProperty.Code code, props)
 
     [<CustomOperation("competencies")>]
-    member inline _.SetCompetencies(state, comps) =
-        { state with Plan.Competencies = comps }
+    member inline this.SetCompetencies(props, comps) =
+        this.Combine(PlanProperty.Competencies comps, props)
 
     [<CustomOperation("semesters")>]
-    member inline _.SetSemesters(state, sems) = { state with Semesters = sems }
+    member inline this.SetSemesters(props, semesters) =
+        this.Combine(PlanProperty.Semesters semesters, props)
 
 // Simple Discipline
 [<RequireQualifiedAccess>]
@@ -372,6 +486,7 @@ type SimpleDisciplineBuilder() =
     member inline this.SetInteractiveHours(props: SimpleDisciplineProperty list, hours) =
         this.Combine(SimpleDisciplineProperty.InteractiveHours hours, props)
 
+// Complex Block
 [<RequireQualifiedAccess>]
 type ComplexBlockProperty =
     | Name of string
@@ -383,7 +498,6 @@ type ComplexBlockProperty =
         | Track(name, blocks) ->
             { cb with
                 Tracks = cb.Tracks |> Map.add name blocks }
-
 
 type ComplexBlockBuilder() =
     inherit DSLBuilder<ComplexBlock, ComplexBlockProperty>(ComplexBlock.Empty, ComplexBlockProperty.Folder)
