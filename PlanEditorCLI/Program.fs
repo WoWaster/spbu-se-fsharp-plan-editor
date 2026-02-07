@@ -1,5 +1,4 @@
-﻿open PlanEditor.ExcelExport
-open PlanEditor.BySemesterDSL
+﻿open PlanEditor.BySemester.DSL
 
 let upCompetencies =
     [ "УК-1",

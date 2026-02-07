@@ -1,8 +1,6 @@
-module PlanEditor.ExcelExport
+module PlanEditor.BySemester.ExcelExport
 
-open BySemesterModel
 open ClosedXML.Excel
-
 
 // Helpers
 let placeHeaderLine (ws: IXLWorksheet) (text: string) =

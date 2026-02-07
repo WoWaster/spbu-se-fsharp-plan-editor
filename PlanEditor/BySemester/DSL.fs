@@ -1,7 +1,7 @@
-module PlanEditor.BySemesterDSL
+module PlanEditor.BySemester.DSL
 
-open BySemesterBuilders
-open BySemesterModel
+open Builders
+open ExcelExport
 
 let fgosCodeDisciplines = Disciplines
 let fgosCodePracticalTraining = PracticalTraining
@@ -28,3 +28,5 @@ let variablePart = VariablePartBuilder()
 let complexBlock = ComplexBlockBuilder()
 let semester = SemesterBuilder()
 let plan = PlanBuilder()
+
+let exportToExcel = exportToExcel

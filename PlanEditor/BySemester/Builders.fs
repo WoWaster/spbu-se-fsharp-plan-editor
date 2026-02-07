@@ -1,7 +1,6 @@
-module PlanEditor.BySemesterBuilders
+module PlanEditor.BySemester.Builders
 
-open BySemesterModel
-open DSLCommon
+open PlanEditor.DSLCommon
 
 // Classroom Work
 [<RequireQualifiedAccess>]

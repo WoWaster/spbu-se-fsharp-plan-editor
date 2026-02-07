@@ -4,10 +4,11 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="BySemesterModel.fs" />
     <Compile Include="DSLCommon.fs" />
-    <Compile Include="BySemesterBuilders.fs" /><Compile Include="BySemesterDSL.fs" />
-    <Compile Include="ExcelExport.fs" />
+    <Compile Include="BySemester/Model.fs" />
+    <Compile Include="BySemester/Builders.fs" />
+    <Compile Include="BySemester/ExcelExport.fs" />
+    <Compile Include="BySemester/DSL.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.105.0" />

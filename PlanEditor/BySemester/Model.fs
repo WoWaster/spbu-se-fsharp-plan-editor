@@ -1,4 +1,4 @@
-module PlanEditor.BySemesterModel
+namespace PlanEditor.BySemester
 
 // Модель учебного плана в ИС СПбГУ в упрощенном случае выглядит примерно так.
 //
