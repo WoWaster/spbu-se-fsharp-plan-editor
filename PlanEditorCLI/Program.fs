@@ -1,7 +1,6 @@
-﻿open PlanEditor.BySemesterModel
+﻿open PlanEditor.BySemester.DSL
 
-
-let competencies =
+let upCompetencies =
     [ "УК-1",
       "Способен осуществлять поиск, критический анализ и синтез информации, применять системный подход для решения поставленных задач"
       "УК-3", "Способен осуществлять социальное взаимодействие и реализовывать свою роль в команде"
@@ -19,108 +18,174 @@ let competencies =
       "Способен демонстрировать базовые знания математических и естественных наук, программирования и информационных технологий"
       "ПКП-10-А-ПК-1", "Осуществляет управление архитектурой изолированной (неинтегрированной) программной системы"
       "ПКП-13-А-ПК-4", "Осуществляет оценки и управление рисками" ]
+    |> Map.ofList
 
+let cw =
+    classroomWork {
+        lectures 26
+        practicalClasses 34
+        intermediateAssessment 4
+    }
+
+let iw =
+    independentWork {
+        inInstructorPresence 8
+        usingMaterials 34
+        intermediateAssessment 2
+    }
 
 let bzhd =
-    { Info =
-        { FgosBlockCode = Disciplines
-          Workload = 3
-          Competencies = [ "УК-8" ]
-          AssessmentForms = [ Credit ] }
-      Discipline =
-        { Number = 073519
-          Name = "Безопасность жизнедеятельности"
-          EnglishName = "Life Safety"
-          Realization = ""
-          Trajectory = ""
-          ClassroomWork =
-            { defaultClassroomWork with
-                Lectures = 26
-                PracticalClasses = 34
-                IntermediateAssessment = 4 }
-          IndependentWork =
-            { defaultIndependentWork with
-                InInstructorPresence = 8
-                UsingMaterials = 34
-                IntermediateAssessment = 2 }
-          InteractiveHours = 0 } }
+    simpleDiscipline {
+        workload 3
+        competencies [ "УК-8" ]
+        number 73519
+        name "Безопасность жизнедеятельности"
+        englishName "Life Safety"
+        assessmentForms [ credit ]
+        cw
+        iw
+    }
 
-let practicalTrainingStandard =
-    { Info =
-        { FgosBlockCode = PracticalTraining
-          Workload = 3
-          Competencies =
-            [ "ОПК-1"
-              "ОПК-2"
-              "ОПК-3"
-              "ОПК-4"
-              "ПКА-1"
-              "ПКП-10-А-ПК-1"
-              "ПКП-13-А-ПК-4"
-              "УК-1"
-              "УК-3" ]
-          AssessmentForms = [ Credit ] }
-      Discipline =
-        { Number = 064793
-          Name = "Учебная практика 2 (научно-исследовательская работа)"
-          EnglishName = "Practical Training 2 (Research Project)"
-          Realization = ""
-          Trajectory = ""
-          ClassroomWork =
-            { defaultClassroomWork with
-                IntermediateAssessment = 2 }
-          IndependentWork =
-            { defaultIndependentWork with
-                InInstructorPresence = 30
-                UsingMaterials = 68
-                IntermediateAssessment = 8 }
-          InteractiveHours = 8 } }
-
-let teorverTop =
-    { Info =
-        { FgosBlockCode = Disciplines
-          Workload = 2
-          Competencies = [ "ОПК-1"; "ПКА-1" ]
-          AssessmentForms = [ Credit ] }
-      Discipline =
-        { Number = 002188
-          Name = "Теория вероятностей и математическая статистика"
-          EnglishName = "Probability Theory and Mathematical Statistics"
-          Realization = "осн курс"
-          Trajectory = "тр 3 г"
-          ClassroomWork =
-            { defaultClassroomWork with
-                Lectures = 30
-                PracticalClasses = 12
-                ControlWorks = 2
-                IntermediateAssessment = 2 }
-          IndependentWork =
-            { defaultIndependentWork with
-                UsingMaterials = 18
-                IntermediateAssessment = 8 }
-          InteractiveHours = 12 } }
-
-let semester5 =
-    { Number = 5
-      Disciplines =
-        [ BaseDiscipline bzhd
-          BaseDisciplineBlock
-              { BlockName = ":"
-                Items =
-                  [ { SubBlockName = "Технологии программирования  — \"общий профиль\""
-                      Disciplines = [ practicalTrainingStandard ] }
-                    { SubBlockName = "Технологии программирования — \"профиль ТОП ИТ\""
-                      Disciplines = [ teorverTop ] } ] } ] }
 
 let up =
-    { Name = "Технологии програмирования"
-      EnglishName = "Technology Programming"
-      StudyLevel = Bachelor
-      Specialty = "02.03.03 Математическое обеспечение и администрирование информационных систем"
-      LanguagesOfInstruction = [ Russian; English ]
-      YearOfAdmission = 25
-      Code = 5162
-      Competencies = Map.ofList competencies
-      Semesters = [ semester5 ] }
+    plan {
+        name "Технологии программирования"
+        englishName "Technology Programming"
+        specialty "02.03.03 Математическое обеспечение и администрирование информационных систем"
+        yearOfAdmission 25
+        code 5162
+        competencies upCompetencies
+
+        semesters
+            [ semester {
+                  number 5
+
+                  basicPart {
+                      bzhd
+
+                      complexBlock {
+                          name ":"
+
+                          track
+                              "Технологии программирования  — \"общий профиль\""
+                              [ simpleDiscipline {
+                                    fgosBlockCode fgosCodePracticalTraining
+                                    workload 3
+
+                                    competencies
+                                        [ "ОПК-1"
+                                          "ОПК-2"
+                                          "ОПК-3"
+                                          "ОПК-4"
+                                          "ПКА-1"
+                                          "ПКП-10-А-ПК-1"
+                                          "ПКП-13-А-ПК-4"
+                                          "УК-1"
+                                          "УК-3" ]
+
+                                    number 064793
+                                    name "Учебная практика 2 (научно-исследовательская работа)"
+                                    englishName "Practical Training 2 (Research Project)"
+                                    assessmentForms [ credit ]
+                                    classroomWork { intermediateAssessment 2 }
+
+                                    independentWork {
+                                        inInstructorPresence 30
+                                        usingMaterials 68
+                                        intermediateAssessment 8
+                                    }
+
+                                    interactiveHours 8
+                                } ]
+
+                          track
+                              "Технологии программирования — \"профиль ТОП ИТ\""
+                              [ simpleDiscipline {
+                                    workload 2
+                                    competencies [ "ОПК-1"; "ПКА-1" ]
+                                    number 002188
+                                    name "Теория вероятностей и математическая статистика"
+                                    englishName "Probability Theory and Mathematical Statistics"
+                                    realization "осн курс"
+                                    trajectory "тр 3 г"
+                                    assessmentForms [ credit ]
+
+                                    classroomWork {
+                                        lectures 30
+                                        practicalClasses 12
+                                        controlWorks 2
+                                        intermediateAssessment 2
+                                    }
+
+                                    independentWork {
+                                        usingMaterials 18
+                                        intermediateAssessment 8
+                                    }
+
+                                    interactiveHours 12
+                                }
+
+                                ]
+                      }
+                  }
+              }
+              semester {
+                  number 8
+
+                  variablePart {
+                      complexBlock {
+                          name ":"
+
+                          track
+                              "Технологии программирования — \"профиль ТОП ИТ\""
+                              [ electiveBlock {
+                                    workload 2
+                                    competencies [ "ПКП-1-ИП-ПК-1" ]
+
+                                    disciplines
+                                        [ disciplineInBlock {
+                                              number 81474
+                                              name "Программирование на F#"
+                                              englishName "F# Programming"
+                                              assessmentForms [ credit ]
+
+                                              classroomWork {
+                                                  practicalClasses 20
+                                                  intermediateAssessment 2
+                                              }
+
+                                              independentWork {
+                                                  usingMaterials 42
+                                                  intermediateAssessment 8
+                                              }
+
+                                              interactiveHours 20
+                                          }
+                                          disciplineInBlock {
+                                              number 2299
+                                              name "Функциональное программирование"
+                                              englishName "Functional Programming"
+                                              realization "осн курс"
+                                              trajectory "тр 8 сем"
+                                              assessmentForms [ credit ]
+
+                                              classroomWork {
+                                                  seminars 20
+                                                  intermediateAssessment 2
+                                              }
+
+                                              independentWork {
+                                                  usingMaterials 42
+                                                  intermediateAssessment 8
+                                              }
+
+                                              interactiveHours 4
+                                          } ]
+                                } ]
+                      }
+                  }
+              } ]
+    }
 
 printfn "%A" up
+up |> exportToExcel @"out.xlsx"
