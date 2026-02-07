@@ -1,126 +1,281 @@
-﻿open PlanEditor.BySemesterModel
+﻿module PlanEditorCLI.Program
 
+open PlanEditor.Types
+open PlanEditor.ConsoleEditor
+open PlanEditor.ExcelExport
+open System
 
-let competencies =
-    [ "УК-1",
-      "Способен осуществлять поиск, критический анализ и синтез информации, применять системный подход для решения поставленных задач"
-      "УК-3", "Способен осуществлять социальное взаимодействие и реализовывать свою роль в команде"
-      "УК-8",
-      "Способен создавать и поддерживать в повседневной жизни и в профессиональной деятельности безопасные условия жизнедеятельности для сохранения природной среды, обеспечения устойчивого развития общества, в том числе при угрозе и возникновении чрезвычайных ситуаций и военных конфликтов"
-      "ОПК-1",
-      "Способен применять фундаментальные знания, полученные в области математических и (или) естественных наук, и использовать их в профессиональной деятельности"
-      "ОПК-2",
-      "Способен применять современный математический аппарат, связанный с проектированием, разработкой, реализацией и оценкой качества программных продуктов и программных комплексов в различных областях человеческой деятельности"
-      "ОПК-3",
-      "Способен понимать и применять современные информационные технологии, в том числе отечественные, при создании программных продуктов и программных комплексов различного назначения"
-      "ОПК-4",
-      "Способен участвовать в разработке технической документации программных продуктов и программных комплексов"
-      "ПКА-1",
-      "Способен демонстрировать базовые знания математических и естественных наук, программирования и информационных технологий"
-      "ПКП-10-А-ПК-1", "Осуществляет управление архитектурой изолированной (неинтегрированной) программной системы"
-      "ПКП-13-А-ПК-4", "Осуществляет оценки и управление рисками" ]
+// Функция для создания примерных данных
+let createSampleCourses() : Course list =
+    [
+        // Пример 1: Английский язык
+        { emptyCourse with
+            Code = "060139"
+            RussianName = "Английский язык в сфере профессиональной коммуникации"
+            EnglishName = "English for Professional Communication"
+            Type = Base
+            Implementations = [
+                { emptyImplementation with
+                    Semester = 1
+                    LaborIntensity = 2
+                    BlockCode = Disciplines
+                    Competences = ["УК-4"]
+                    MonitoringTypes = "Зачет"
+                    WorkHours = parseWorkHours "0 0 2 32 0 0 0 0 2 0 0 36 0 0 58"
+                    Realization = ""
+                    Trajectory = "" }
+            ]
+            ElectivesBlock = [] }
+        
+        // Пример 2: Математическая логика
+        { emptyCourse with
+            Code = "031539"
+            RussianName = "Дополнительные главы математической логики и теории алгоритмов"
+            EnglishName = "Additional Chapters of Mathematical Logic and Algorithm Theory"
+            Type = Base
+            Implementations = [
+                { emptyImplementation with
+                    Semester = 1
+                    LaborIntensity = 5
+                    BlockCode = Disciplines
+                    Competences = ["ОПК-4"; "ОПК-6"]
+                    MonitoringTypes = "Экзамен"
+                    WorkHours = parseWorkHours "15 0 2 15 0 0 0 0 2 30 0 76 0 40 19"
+                    Realization = ""
+                    Trajectory = "" }
+            ]
+            ElectivesBlock = [] }
+        
+        // Пример 3: Практика
+        { emptyCourse with
+            Code = "070911"
+            RussianName = "Учебная (ознакомительная) практика"
+            EnglishName = "Professional (Introductory) Training"
+            Type = Base
+            Implementations = [
+                { emptyImplementation with
+                    Semester = 1
+                    LaborIntensity = 4
+                    BlockCode = PracticalTraining
+                    Competences = ["УК-2"; "УКМ-1"; "УКМ-4"]
+                    MonitoringTypes = "Зачет"
+                    WorkHours = parseWorkHours "4 12 0 0 0 0 0 2 70 16 40 0 0 22 0"
+                    Realization = ""
+                    Trajectory = "" }
+            ]
+            ElectivesBlock = [] }
+    ]
 
+// Главное меню
+let showMainMenu() =
+    printfn ""
+    printfn "╔════════════════════════════════════════╗"
+    printfn "║     РЕДАКТОР УЧЕБНОГО ПЛАНА СПбГУ      ║"
+    printfn "╚════════════════════════════════════════╝"
+    printfn ""
+    printfn "Основное меню:"
+    printfn "┌─────────────────────────────────────────┐"
+    printfn "│ 1. Запустить интерактивный редактор     │"
+    printfn "│ 2. Создать пример и сохранить в файл    │"
+    printfn "│ 3. Загрузить из файла                   │"
+    printfn "│ 4. Проверить автосохранение             │"
+    printfn "│ 5. Экспорт в Excel (out.xlsx)           │"
+    printfn "│ 6. Выйти из программы                   │"
+    printfn "└─────────────────────────────────────────┘"
+    printf "\nВыбор: "
+    Console.ReadLine().Trim()
 
-let bzhd =
-    { Info =
-        { FgosBlockCode = Disciplines
-          Workload = 3
-          Competencies = [ "УК-8" ]
-          AssessmentForms = [ Credit ] }
-      Discipline =
-        { Number = 073519
-          Name = "Безопасность жизнедеятельности"
-          EnglishName = "Life Safety"
-          Realization = ""
-          Trajectory = ""
-          ClassroomWork =
-            { defaultClassroomWork with
-                Lectures = 26
-                PracticalClasses = 34
-                IntermediateAssessment = 4 }
-          IndependentWork =
-            { defaultIndependentWork with
-                InInstructorPresence = 8
-                UsingMaterials = 34
-                IntermediateAssessment = 2 }
-          InteractiveHours = 0 } }
-
-let practicalTrainingStandard =
-    { Info =
-        { FgosBlockCode = PracticalTraining
-          Workload = 3
-          Competencies =
-            [ "ОПК-1"
-              "ОПК-2"
-              "ОПК-3"
-              "ОПК-4"
-              "ПКА-1"
-              "ПКП-10-А-ПК-1"
-              "ПКП-13-А-ПК-4"
-              "УК-1"
-              "УК-3" ]
-          AssessmentForms = [ Credit ] }
-      Discipline =
-        { Number = 064793
-          Name = "Учебная практика 2 (научно-исследовательская работа)"
-          EnglishName = "Practical Training 2 (Research Project)"
-          Realization = ""
-          Trajectory = ""
-          ClassroomWork =
-            { defaultClassroomWork with
-                IntermediateAssessment = 2 }
-          IndependentWork =
-            { defaultIndependentWork with
-                InInstructorPresence = 30
-                UsingMaterials = 68
-                IntermediateAssessment = 8 }
-          InteractiveHours = 8 } }
-
-let teorverTop =
-    { Info =
-        { FgosBlockCode = Disciplines
-          Workload = 2
-          Competencies = [ "ОПК-1"; "ПКА-1" ]
-          AssessmentForms = [ Credit ] }
-      Discipline =
-        { Number = 002188
-          Name = "Теория вероятностей и математическая статистика"
-          EnglishName = "Probability Theory and Mathematical Statistics"
-          Realization = "осн курс"
-          Trajectory = "тр 3 г"
-          ClassroomWork =
-            { defaultClassroomWork with
-                Lectures = 30
-                PracticalClasses = 12
-                ControlWorks = 2
-                IntermediateAssessment = 2 }
-          IndependentWork =
-            { defaultIndependentWork with
-                UsingMaterials = 18
-                IntermediateAssessment = 8 }
-          InteractiveHours = 12 } }
-
-let semester5 =
-    { Number = 5
-      Disciplines =
-        [ BaseDiscipline bzhd
-          BaseDisciplineBlock
-              { BlockName = ":"
-                Items =
-                  [ { SubBlockName = "Технологии программирования  — \"общий профиль\""
-                      Disciplines = [ practicalTrainingStandard ] }
-                    { SubBlockName = "Технологии программирования — \"профиль ТОП ИТ\""
-                      Disciplines = [ teorverTop ] } ] } ] }
-
-let up =
-    { Name = "Технологии програмирования"
-      EnglishName = "Technology Programming"
-      StudyLevel = Bachelor
-      Specialty = "02.03.03 Математическое обеспечение и администрирование информационных систем"
-      LanguagesOfInstruction = [ Russian; English ]
-      YearOfAdmission = 25
-      Code = 5162
-      Competencies = Map.ofList competencies
-      Semesters = [ semester5 ] }
-
-printfn "%A" up
+// Основная функция программы
+[<EntryPoint>]
+let main argv =
+    Console.Clear()
+    Console.OutputEncoding <- Text.Encoding.UTF8
+    Console.InputEncoding <- Text.Encoding.UTF8
+    printfn "Добро пожаловать в Редактор учебного плана!"
+    printfn "Версия 1.0 | Для СПбГУ | Программная инженерия"
+    printfn ""
+    
+    try
+        // Обработка аргументов командной строки
+        if argv.Length > 0 then
+            match argv.[0].ToLower() with
+            | "--help" | "-h" ->
+                printfn "Использование:"
+                printfn "  dotnet run [-- <аргументы>]"
+                printfn ""
+                printfn "Аргументы командной строки:"
+                printfn "  --help, -h            Показать эту справку"
+                printfn "  --sample, -s          Создать пример учебного плана"
+                printfn "  --load <файл>, -l     Загрузить из JSON файла"
+                printfn "  --editor, -e          Запустить интерактивный редактор"
+                printfn "  --interactive, -i     Интерактивный режим (по умолчанию)"
+                printfn ""
+                printfn "Примеры:"
+                printfn "  dotnet run -- --sample"
+                printfn "  dotnet run -- --load plan.json"
+                printfn "  dotnet run -- --editor"
+                0
+                
+            | "--sample" | "-s" ->
+                printfn "Создание примера учебного плана..."
+                let sampleCourses = createSampleCourses()
+                let filename = "sample_plan.json"
+                if saveToFile filename sampleCourses then
+                    printfn "✓ Пример сохранен в файл: %s" filename
+                    printfn "  Создано %d курсов." sampleCourses.Length
+                else
+                    printfn "✗ Не удалось сохранить пример."
+                0
+                
+            | "--load" | "-l" when argv.Length > 1 ->
+                let filename = argv.[1]
+                printfn "Загрузка из файла: %s" filename
+                let courses = loadFromFile filename
+                if not (List.isEmpty courses) then
+                    printfn "✓ Загружено %d курсов из %s" courses.Length filename
+                    printf "\nЗапустить интерактивный редактор? (y/n): "
+                    if Console.ReadLine().ToLower() = "y" then
+                        let editor = InteractiveEditor()
+                        editor.StartEditor courses |> ignore
+                else
+                    printfn "✗ Не удалось загрузить файл или файл пуст."
+                0
+                
+            | "--editor" | "-e" ->
+                printfn "Запуск интерактивного редактора..."
+                let editor = InteractiveEditor()
+                editor.StartEditor [] |> ignore
+                0
+                
+            | _ ->
+                printfn "Неизвестный аргумент: %s" argv.[0]
+                printfn "Используйте --help для справки."
+                1
+        
+        else
+            let mutable continueLoop = true
+            
+            while continueLoop do
+                match showMainMenu() with
+                | "1" ->
+                    // Запуск интерактивного редактора
+                    printfn "\nЗапуск интерактивного редактора..."
+                    let editor = InteractiveEditor()
+                    let _ = editor.StartEditor []
+                    printfn "\nРедактор завершил работу."
+                    
+                | "2" ->
+                    // Создать пример
+                    printfn "\nСоздание примера учебного плана..."
+                    let sampleCourses = createSampleCourses()
+                    printfn "✓ Создано %d примерных курсов:" sampleCourses.Length
+                    
+                    sampleCourses |> List.iteri (fun i course ->
+                        printfn "  %d. [%s] %s" (i+1) course.Code course.RussianName)
+                    
+                    printf "\nСохранить в файл? (y/n): "
+                    if Console.ReadLine().ToLower() = "y" then
+                        printf "Имя файла [sample_plan.json]: "
+                        let filename = 
+                            let input = Console.ReadLine()
+                            if String.IsNullOrWhiteSpace(input) then "sample_plan.json" else input
+                        
+                        if saveToFile filename sampleCourses then
+                            printfn "✓ Сохранено в %s" filename
+                        else
+                            printfn "✗ Не удалось сохранить файл."
+                    
+                | "3" ->
+                    // Загрузить из файла
+                    printf "\nВведите имя файла для загрузки: "
+                    let filename = Console.ReadLine()
+                    
+                    if System.IO.File.Exists(filename) then
+                        let courses = loadFromFile filename
+                        if not (List.isEmpty courses) then
+                            printfn "✓ Загружено %d курсов из %s:" courses.Length filename
+                            courses |> List.iteri (fun i course ->
+                                printfn "  %d. [%s] %s" (i+1) course.Code course.RussianName)
+                            
+                            printf "\nХотите отредактировать загруженные курсы? (y/n): "
+                            if Console.ReadLine().ToLower() = "y" then
+                                let editor = InteractiveEditor()
+                                editor.StartEditor courses |> ignore
+                        else
+                            printfn "✗ Файл пуст или поврежден."
+                    else
+                        printfn "✗ Файл не найден: %s" filename
+                    
+                | "4" ->
+                    // Проверить автосохранение
+                    let autosaveFile = "autosave.json"
+                    if System.IO.File.Exists(autosaveFile) then
+                        printfn "\nНайдено автосохранение: %s" autosaveFile
+                        printf "Загрузить автосохранение? (y/n): "
+                        if Console.ReadLine().ToLower() = "y" then
+                            let autosaveCourses = loadFromFile autosaveFile
+                            if not (List.isEmpty autosaveCourses) then
+                                printfn "✓ Загружено %d курсов из автосохранения:" autosaveCourses.Length
+                                autosaveCourses |> List.iteri (fun i course ->
+                                    printfn "  %d. [%s] %s" (i+1) course.Code course.RussianName)
+                                
+                                printf "\nХотите отредактировать эти курсы? (y/n): "
+                                if Console.ReadLine().ToLower() = "y" then
+                                    let editor = InteractiveEditor()
+                                    editor.StartEditor autosaveCourses |> ignore
+                            else
+                                printfn "✗ Автосохранение пусто."
+                    else
+                        printfn "\nАвтосохранение не найдено."
+                
+                | "5" ->
+                    printf "\nВведите имя JSON-файла с курсами для экспорта в Excel: "
+                    let jsonFile = Console.ReadLine().Trim()
+                    
+                    if not (System.IO.File.Exists jsonFile) then
+                        printfn "Файл не найден: %s" jsonFile
+                    else
+                        try
+                            let courses = loadFromFile jsonFile
+                            
+                            if courses.IsEmpty then
+                                printfn "В файле %s нет курсов (или файл повреждён)" jsonFile
+                            else
+                                printf "Имя выходного Excel-файла [out.xlsx]: "
+                                let xlsxInput = Console.ReadLine().Trim()
+                                let xlsxFilename = 
+                                    if String.IsNullOrWhiteSpace xlsxInput 
+                                    then "out.xlsx" 
+                                    else xlsxInput
+                                
+                                printfn "Экспортирую %d курсов из %s в %s..." 
+                                    courses.Length jsonFile xlsxFilename
+                                
+                                exportToExcel xlsxFilename courses
+                                printfn "✓ Экспорт успешно завершён"
+                        with ex ->
+                            printfn "Ошибка при обработке:"
+                            printfn "  %s" ex.Message
+                    
+                | "6" ->
+                    // Выход
+                    printfn "\nЗавершение работы..."
+                    printfn "Спасибо за использование Редактора учебного плана!"
+                    printfn "До свидания!"
+                    continueLoop <- false
+                    
+                | _ ->
+                    printfn "\n✗ Неизвестная команда. Попробуйте снова."
+            
+            0  // Успешный выход
+    with
+    | ex ->
+        printfn "\n╔════════════════════════════════════════╗"
+        printfn "║           ОШИБКА ПРОГРАММЫ             ║"
+        printfn "╚════════════════════════════════════════╝"
+        printfn ""
+        printfn "Произошла ошибка: %s" ex.Message
+        printfn ""
+        printfn "Нажмите Enter для выхода..."
+        Console.ReadLine() |> ignore
+        1

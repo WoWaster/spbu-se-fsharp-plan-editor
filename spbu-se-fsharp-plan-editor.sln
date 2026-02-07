@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PlanEditor", "PlanEditor\PlanEditor.fsproj", "{6E23F926-BE5E-41C7-AA86-E92115046CCD}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PlanEditor", "PlanEditor\BySubject\PlanEditor.fsproj", "{6E23F926-BE5E-41C7-AA86-E92115046CCD}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PlanEditorCLI", "PlanEditorCLI\PlanEditorCLI.fsproj", "{02B5E4E1-820F-4889-A982-3FC8824C7557}"
 EndProject

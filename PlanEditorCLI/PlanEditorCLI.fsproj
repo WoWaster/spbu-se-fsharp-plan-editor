@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PlanEditor\PlanEditor.fsproj" />
+    <ProjectReference Include="..\PlanEditor\BySubject\PlanEditor.fsproj" />
   </ItemGroup>
 
 </Project>
