@@ -11,13 +11,10 @@ let distinctSortCommaConcat items = distinctSortMapCommaConcat id items
 type CompetencyDto = { Code: string; Description: string }
 
 let fgosBlockCodeToString (code: FgosBlockCode) : string =
-    match box code with
-    | null -> "Блок.1.дисц"  // Значение по умолчанию
-    | _ ->
-        match code with
-        | Disciplines -> "Блок.1.дисц"
-        | PracticalTraining -> "Блок.2.прки"
-        | Gia -> "Блок.3.гиа"
+    match code with
+    | Disciplines -> "Блок.1.дисц"
+    | PracticalTraining -> "Блок.2.прки"
+    | Gia -> "Блок.3.гиа"
 
 // Функция для определения типа блока на основе названия курса
 let detectBlockCode (courseName: string) (implName: string option) : FgosBlockCode =
@@ -86,7 +83,6 @@ let toBaseDisciplineDto (course: Course) (impl: Implementation) : BaseDiscipline
             | "экзамен" -> "экзамен"
             | "зачет" | "зачёт" -> "зачёт"
             | "аттестационноеиспытание" | "аттестация" -> "аттестационное испытание"
-            | "текущийконтроль" | "контроль" -> "текущий контроль"
             | other -> other
 
     let blockCode = 

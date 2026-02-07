@@ -107,7 +107,6 @@ let parseMonitoringTypeList (input: string) : string =
             | "1" | "экзамен" -> "Экзамен"
             | "2" | "зачет" | "зачёт" -> "Зачет"
             | "3" | "аттестационноеиспытание" | "аттестация" -> "АттестационноеИспытание"
-            | "4" | "текущийконтроль" | "контроль" -> "ТекущийКонтроль"
             | other -> other
         )
         String.Join(", ", converted)
@@ -638,23 +637,3 @@ type InteractiveEditor() =
                 mainLoop courses
         
         mainLoop initialCourses
-
-// Компактные функции для быстрого создания тестовых данных
-module QuickDSL =
-    
-    let quickCourse code ruName enName courseType =
-        { emptyCourse with
-            Code = code
-            RussianName = ruName
-            EnglishName = enName
-            Type = courseType
-            Implementations = [] }
-    
-    let quickImplementation semester labor block =
-        { emptyImplementation with
-            Semester = semester
-            LaborIntensity = labor
-            BlockCode = block
-            Competences = []
-            MonitoringTypes = ""
-            WorkHours = emptyWorkHours }
